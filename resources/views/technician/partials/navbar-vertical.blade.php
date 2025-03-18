@@ -9,7 +9,7 @@
         <ul class="navbar-nav flex-column" id="sideNavbar">
             <li class="nav-item">
                 <a class="nav-link has-arrow @@if (context.page ===  'dashboard') { active }" href="@@webRoot/index.html">
-                    <i data-feather="home" class="nav-icon icon-xs me-2"></i>  Dashboard
+                    <i data-feather="home" class="nav-icon icon-xs me-2"></i>  Dashboards
                 </a>
 
             </li>
