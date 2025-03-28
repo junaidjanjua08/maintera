@@ -31,10 +31,28 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
         <a href="appointment.html" class="dropdown-item">Appointment</a>
         <a href="team.html" class="dropdown-item">Our Team</a>
         <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-        <a href="404.html" class="dropdown-item">404 Page</a>
+        <a href="{{ route('404') }}" class="dropdown-item">404 Page</a>
       </div>
     </div>
     <a href="{{ route('contact-us') }}" class="nav-item nav-link">Contact Us</a>
+
+    @if(Auth::user())
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          | Junaid
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+          <a class="dropdown-item" href="{{ route('profile') }}">Profile</a>
+          <div class="dropdown-divider"></div>
+          <form method="POST" action="{{ route('logout') }}">
+              @csrf
+              <button type="submit" class="dropdown-item">Logout</button>
+          </form>
+      </div>
+  </li>
+  
+      @endif
+
   </div>
 </div>
 </nav>
