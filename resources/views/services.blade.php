@@ -176,6 +176,7 @@
                     <input
                       type="email"
                       class="form-control bg-light border-0"
+                      
                       id="gmail"
                       placeholder="Gurdian Email"
                     />
