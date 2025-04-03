@@ -151,10 +151,10 @@
               </a>
             </li>
             <li>
-              <a class="dropdown-item" href="@@webRoot/index.html">
-                <i class="me-2 icon-xxs dropdown-item-icon"
-                  data-feather="power"></i>Sign Out
-              </a>
+              <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class=" icon-xxs dropdown-item-icon">Logout</button>
+            </form>
             </li>
           </ul>
 

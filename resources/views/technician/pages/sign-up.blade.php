@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  @@include("../partials/head.html")
+  @include('technician.partials.head')
   <title>Sign Up | Dash Ui - Bootstrap 5 Admin Dashboard Template</title>
 </head>
 
@@ -84,7 +84,7 @@
   </div>
 
   <!-- Scripts -->
-  @@include("../partials/scripts.html")
+  @include('technician.partials.scripts')
 </body>
 
 </html>

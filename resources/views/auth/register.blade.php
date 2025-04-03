@@ -90,7 +90,14 @@
         <h2>Register</h2>
         <form method="POST" action="{{ route('register') }}">
             @csrf
-
+            <div class="mt-4">
+                <label for="role" class="block text-sm font-medium text-gray-700">Register As:</label>
+                <select id="role" name="role" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    <option value="customer">Customer</option>
+                    <option value="technician">Technician</option>
+                </select>
+            </div>
+            
             <!-- Name -->
             <div>
                 <label for="name">Name</label>

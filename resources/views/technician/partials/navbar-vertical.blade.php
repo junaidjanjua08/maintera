@@ -73,10 +73,10 @@
                             <div id="navAuthentication" class="collapse @@if (context.page_group === 'authentication') { show }" data-bs-parent="#sideNavbar">
                                 <ul class="nav flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link @@if (context.page === 'signin') { active }" href="@@webRoot/pages/sign-in.html"> Sign In</a>
+                                        <a class="nav-link @@if (context.page === 'signin') { active }" href=""> Sign In</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link @@if (context.page === 'signup') { active } " href="@@webRoot/pages/sign-up.html"> Sign Up</a>
+                                        <a class="nav-link @@if (context.page === 'signup') { active } " href=""> Sign Up</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link @@if (context.page === 'forgetpassword') { active }" href="@@webRoot/pages/forget-password.html">

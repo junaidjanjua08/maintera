@@ -3,17 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -30,7 +19,6 @@ Route::middleware('auth')->group(function () {
         return view('404');
     })->name('profile');
 });
-
 Route::get('/home', function () {
     return view('welcome');
 })->name('home');
@@ -51,17 +39,33 @@ Route::get('/404', function () {
 })->name('404');
 
 
-
-
+// -----------------------------------------------------------------------------------
 // admin routes
 Route::get('/admin-dashboard', function () {
     return view('admin.index');
 });
 
 
-
+// -----------------------------------------------------------------------------------
 // technician routes
-Route::get('/tech-dashboard', function () {
-    return view('technician.index');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('tech-dashboard', function () {
+        return view('technician.index');
+    })->name('technician.dashboard');
 });
+
+
+
+// Route::get('/technnician-dashboard', function () {
+//     return view('technician.index');
+// })->name('technician.dashboard');
+// Route::get('/tech-login', function () {
+//     return view('technician.pages.sign-in');
+// })->name('tech-login');
+// Route::get('/tech-register', function () {
+//     return view('technician.pages.sign-up');
+// })->name('tech-register');
+
+
 require __DIR__.'/auth.php';
