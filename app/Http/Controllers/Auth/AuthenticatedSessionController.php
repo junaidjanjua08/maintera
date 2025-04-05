@@ -25,6 +25,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // dd($request);
         // Authenticate the user
         $request->authenticate();
     
@@ -35,7 +36,7 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
     
         if ($user->role === 'customer') {
-            return redirect()->route('customer.dashboard');
+            return redirect()->route('dashboard');
         } elseif ($user->role === 'technician') {
             return redirect()->route('technician.dashboard');
         }
