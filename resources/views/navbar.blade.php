@@ -18,7 +18,7 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
   <div class="navbar-nav ms-auto py-3 py-lg-0">
     <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
     <a href="{{ route('about-us') }}" class="nav-item nav-link">About Us</a>
-    <a href="{{ route('services') }}" class="nav-item nav-link">Our Services</a>
+    <a href="{{ route('services') }}" class="nav-item nav-link">Services</a>
     <div class="nav-item dropdown">
       <a
         href="#"
@@ -34,7 +34,8 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
         <a href="{{ route('404') }}" class="dropdown-item">404 Page</a>
       </div>
     </div>
-    <a href="{{ route('contact-us') }}" class="nav-item nav-link">Contact Us</a>
+    {{-- <a href="{{ route('contact-us') }}" class="nav-item nav-link">Contact Us</a> --}}
+    <a href="{{ route('login', ['role' => 'technician']) }}" class="nav-item nav-link">Technician</a>
 
     @if(Auth::user())
     <li class="nav-item dropdown">

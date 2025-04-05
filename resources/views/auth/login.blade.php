@@ -96,6 +96,7 @@ body {
         <form class="space-y-4" method="POST" action="{{ route('login') }}">
             @csrf
             <!-- Email Address -->
+            <input type="hidden" name="role" value="{{ request('role') }}">
             <div>
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email</label>
                 <input type="email" name="email" id="email" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="you@example.com" required autofocus autocomplete="username" value="{{ old('email') }}">
