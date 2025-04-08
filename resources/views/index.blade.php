@@ -36,7 +36,7 @@
     </div>
     <!-- Spinner End -->
 
-    @include('topbar')
+    {{-- @include('topbar') --}}
 
     @include('navbar')
     <!-- Navbar End -->

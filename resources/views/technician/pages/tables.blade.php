@@ -2,7 +2,7 @@
 <html lang="en">
 
   <head>
-    @@include("../partials/head.html")
+     @include('technician.partials.head')
     <title>Tables | Dash Ui - Bootstrap 5 Admin Dashboard Template</title>
   </head>
 
@@ -17,7 +17,7 @@
       })
        <!-- page content -->
       <div id="page-content">
-        @@include("../partials/header.html")
+        @include('technician/partials/header')
         <!-- Container fluid -->
         <div class="container-fluid px-6 py-4">
           <div class="row">
@@ -1782,7 +1782,7 @@
     </div>
 
     <!-- Scripts -->
-    @@include("../partials/scripts.html")
+   @include('technician.partials.scripts')
   </body>
 
 </html>

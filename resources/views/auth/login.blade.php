@@ -96,7 +96,7 @@ body {
         <form class="space-y-4" method="POST" action="{{ route('login') }}">
             @csrf
             <!-- Email Address -->
-            {{-- {{ dd(request('role')) }} --}}
+           
             <input type="hidden" name="role" value="{{ request('role') ?? 'customer' }}">
 
             <div>

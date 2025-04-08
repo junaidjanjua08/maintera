@@ -53,6 +53,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('tech-dashboard', function () {
         return view('technician.index');
     })->name('technician.dashboard');
+    Route::get('edit-profile', function () {
+        return view('technician.pages.edit_profile');
+    })->name('technician.editprofile');
+    Route::get('settings', function () {
+        return view('technician.pages.settings');
+    })->name('technician.settings');
+    Route::get('layouts', function () {
+        return view('technician.pages.layout');
+    })->name('technician.layout');
+    Route::get('pricing', function () {
+        return view('technician.pages.pricing');
+    })->name('technician.pricing');
+    Route::get('order/requests', function () {
+        return view('technician.pages.order-requests');
+    })->name('technician.orders.requests');
+    Route::get('order/pending', function () {
+        return view('technician.pages.pending-orders');
+    })->name('technician.orders.pending');
+    Route::get('order/completed', function () {
+        return view('technician.pages.completed-orders');
+    })->name('technician.orders.completed');
 });
 
 

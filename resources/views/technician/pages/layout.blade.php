@@ -2,19 +2,17 @@
 <html lang="en">
 
   <head>
-    @@include("../partials/head.html")
+     @include('technician.partials.head')
     <title>Layout | Dash Ui - Bootstrap 5 Admin Dashboard Template</title>
   </head>
 
   <body>
     <div id="db-wrapper">
          <!-- navbar vertical -->
-      @@include('../partials/navbar-vertical.html', {
-        "page": "layouts"
-    })
+         @include('technician/partials/navbar-vertical')
        <!-- page content -->
       <div id="page-content">
-        @@include("../partials/header.html")
+        @include('technician/partials/header')
         <!-- Container fluid -->
         <div class="container-fluid px-6 py-4">
             <div class="row">
@@ -44,7 +42,7 @@
       </div>
     </div>
     <!-- Scripts -->
-    @@include("../partials/scripts.html")
+   @include('technician.partials.scripts')
 
 
 

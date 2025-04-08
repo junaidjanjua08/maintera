@@ -121,45 +121,30 @@
           </div>
 
           <ul class="list-unstyled">
-
+            <!-- Edit Profile -->
             <li>
-              <a class="dropdown-item" href="#">
-                <i class="me-2 icon-xxs dropdown-item-icon" data-feather="user"></i>Edit
-                Profile
-              </a>
+                <a class="dropdown-item" href="{{ route('technician.editprofile') }}">
+                    <i class="me-2 icon-xxs dropdown-item-icon" data-feather="user"></i> Edit Profile
+                </a>
             </li>
+      
+            <!-- Account Settings -->
             <li>
-              <a class="dropdown-item"
-                href="#">
-                <i class="me-2 icon-xxs dropdown-item-icon"
-                  data-feather="activity"></i>Activity Log
-              </a>
-
-
+                <a class="dropdown-item" href="#">
+                    <i class="me-2 icon-xxs dropdown-item-icon" data-feather="settings"></i> Account Settings
+                </a>
             </li>
-
+        
+            <!-- Logout -->
             <li>
-              <a class="dropdown-item text-primary" href="#">
-                <i class="me-2 icon-xxs text-primary dropdown-item-icon"
-                  data-feather="star"></i>Go Pro
-              </a>
+                <form method="POST" action="{{ route('logout') }}" class="mb-0">
+                    @csrf
+                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                        <i class="me-2 icon-xxs dropdown-item-icon" data-feather="log-out"></i> Logout
+                    </button>
+                </form>
             </li>
-            <li>
-              <a class="dropdown-item" href="#">
-                <i class="me-2 icon-xxs dropdown-item-icon"
-                  data-feather="settings"></i>Account Settings
-              </a>
-            </li>
-            <li>
-              <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class=" icon-xxs dropdown-item-icon">Logout</button>
-            </form>
-            </li>
-          </ul>
-
-        </div>
-      </li>
-    </ul>
+        </ul>
+        
   </nav>
 </div>
