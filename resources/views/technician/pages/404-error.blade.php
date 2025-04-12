@@ -2,7 +2,7 @@
 <html lang="en">
 
   <head>
-    @@include("../partials/head.html")
+     @include('technician.partials.head')
     <title>404 error | Dash Ui - Bootstrap 5 Admin Dashboard Template </title>
   </head>
 
@@ -32,7 +32,7 @@
       </div>
     </div>
     <!-- Scripts -->
-    @@include("../partials/scripts.html")
+   @include('technician.partials.scripts')
   </body>
 
 </html>

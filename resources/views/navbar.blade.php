@@ -1,7 +1,7 @@
 <nav
 class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-lg-0"
 >
-<a href="index.html" class="navbar-brand d-flex align-items-center">
+<a href="{{ route('home') }}" class="navbar-brand d-flex align-items-center">
   <h1 class="m-0">
     <i class="fa fa-building text-primary me-3"></i>Maintera
   </h1>
@@ -35,9 +35,12 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
       </div>
     </div>
     {{-- <a href="{{ route('contact-us') }}" class="nav-item nav-link">Contact Us</a> --}}
-    <a href="{{ route('login', ['role' => 'technician']) }}" class="nav-item nav-link">Technician</a>
+    <a href="{{ Auth::check() && Auth::user()->role === 'technician' ? route('technician.dashboard') : route('login', ['role' => 'technician']) }}" class="nav-item nav-link">
+      Technician
+  </a>
+  
 
-    @if(Auth::user())
+    @if(Auth::user() && Auth::user()->role === 'customer')
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           | Junaid

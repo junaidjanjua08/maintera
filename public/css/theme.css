@@ -16425,7 +16425,7 @@ textarea.form-control-lg {
     display: none !important; } }
 
 .navbar-vertical {
-  height: 100vh;
+  /* height: 100vh; */
   margin-left: -17rem;
   display: block;
   position: fixed;
@@ -16596,7 +16596,7 @@ textarea.form-control-lg {
 #page-content {
   min-height: 100vh;
   min-width: 100vw;
-  margin-left: 15.625rem;
+  /* margin-left: 15.625rem; */
   transition: margin 0.25s ease-out; }
 
 #db-wrapper.toggled .navbar-vertical {
