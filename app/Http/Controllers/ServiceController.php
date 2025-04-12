@@ -21,6 +21,17 @@ class ServiceController extends Controller
         $serviceCategories = ServiceCategory::all();
         return view('welcome', compact('serviceCategories'));
     }
+   // ServiceController.php
+
+public function ServiceBooking($id)
+{
+    // Fetch the service details based on the ID
+    $service = Service::findOrFail($id);
+    
+    // Return the view and pass the service data
+    return view('booking', compact('service'));
+}
+
 
     public function showServices($categoryId)
     {
