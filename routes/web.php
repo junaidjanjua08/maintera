@@ -15,6 +15,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/services/{category}', [ServiceController::class, 'showServices'])->name('subservices');
+// web.php (Routes file)
+Route::get('/book-service/{id}', [ServiceController::class, 'ServiceBooking'])->name('service.booking');
+
 
 Route::get('/services', [ServiceController::class, 'services'])->name('services');
 Route::middleware('auth')->group(function () {
