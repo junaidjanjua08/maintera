@@ -50,23 +50,26 @@ Route::get('/admin-dashboard', function () {
     return view('admin.index');
 });
 Route::get('/cards', function () {
-    return view('admin.cards');
-})->name('admin.cards');
+    return view('admin.accepted-requests');
+})->name('admin.accepted-requests');
 Route::get('/forms', function () {
     return view('admin.forms');
 })->name('admin.forms');
 Route::get('/charts', function () {
-    return view('admin.charts');
-})->name('admin.charts');
+    return view('admin.manage-services');
+})->name('admin.manage-services');
 Route::get('/buttons', function () {
-    return view('admin.buttons');
-})->name('admin.buttons');
+    return view('admin.rejected-requests');
+})->name('admin.rejected-requests');
 Route::get('/modals', function () {
-    return view('admin.modals');
-})->name('admin.modals');
+    return view('admin.manage-technician');
+})->name('admin.manage-technician');
 Route::get('/tables', function () {
-    return view('admin.tables');
-})->name('admin.tables');
+    return view('admin.technician-queries');
+})->name('admin.technician-queries');
+Route::get('/customer-queries', function () {
+    return view('admin.customer-queries');
+})->name('admin.customer-queries');
 Route::get('/admin-login', function () {
     return view('admin.pages.login');
 })->name('admin.login');
@@ -115,4 +118,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // })->name('tech-register');
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

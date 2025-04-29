@@ -70,13 +70,13 @@
 
                 <!-- Action Buttons (Aligned to the Right) -->
                 <div class="mt-4 md:mt-0 flex gap-3 justify-end w-full">
-                    <button class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105">
                         🔍 View
                     </button>
-                    <button class="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105">
                         ✅ Accept
                     </button>
-                    <button class="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105">
                         ❌ Reject
                     </button>
                 </div>
