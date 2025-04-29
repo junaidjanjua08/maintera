@@ -1,7 +1,8 @@
 @extends('index')
 
 @section('content')
-
+<!-- Include Google Maps API Script -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAP_KEY') }}&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
 <!-- Booking Page Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -19,30 +20,33 @@
                 <!-- Address Section -->
                 <div class="col-md-6">
                     <h5>Address Details</h5>
+
+                    <!-- Street Address Field -->
+                    <div class="form-group">
+                        <label for="user_address">Street Address</label>
+                        <input id="user_address" type="text" class="form-control" placeholder="Enter street address">
+                    </div>
+                    
                     <div class="form-group">
                         <label for="city">City</label>
-                        <select id="city" name="city" class="form-control" required>
-                            <option value="">Select a City</option>
-                            <option value="Islamabad">Islamabad</option>
-                            <option value="Lahore">Lahore</option>
-                            <option value="Karachi">Karachi</option>
-                        </select>
+                        <input type="text" id="city" class="form-control" readonly>
                     </div>
-                    <div class="form-group mt-3">
+                    
+                    <div class="form-group">
                         <label for="area">Area</label>
-                        <select id="area" name="area" class="form-control" required>
-                            <option value="">Select Area</option>
-                        </select>
+                        <input type="text" id="area" class="form-control" readonly>
                     </div>
-                    <div class="form-group mt-3">
-                        <label for="street">Street Address</label>
-                        <input type="text" id="street" name="street" class="form-control" required>
+                    
+                    <div class="form-group">
+                        <label for="sub_area">Sub Area</label>
+                        <input type="text" id="sub_area" class="form-control" readonly>
                     </div>
-                    <div class="form-group mt-3">
-                        <button type="button" id="useLocationBtn" onclick="useCurrentLocation()" class="btn btn-secondary">Use Current Location</button>
-                    </div>
+                    
+                    <input type="hidden" id="lat_route">
+                    <input type="hidden" id="lng_route">
+                    
                 </div>
-        
+
                 <!-- Date and Time Section -->
                 <div class="col-md-6">
                     <h5>Date and Time</h5>
@@ -55,7 +59,7 @@
                         <input type="time" id="time" name="time" class="form-control" required>
                     </div>
                 </div>
-        
+
                 <!-- Payment Method -->
                 <div class="col-md-12 mt-5">
                     <h5>Payment Method</h5>
@@ -72,18 +76,18 @@
                         </label>
                     </div>
                 </div>
-        
+
                 <!-- Service Description -->
                 <div class="col-md-12 mt-5">
                     <h5>Service Description</h5>
                     <textarea name="description" id="description" class="form-control" rows="4" placeholder="Enter any additional details about your service..."></textarea>
                 </div>
-        
+
                 <!-- Submit Button -->
                 <div class="col-12 mt-5 text-center">
                     <button type="submit" class="btn btn-primary">Confirm Booking</button>
                 </div>
-        
+
             </div>
         </form>
         
@@ -93,131 +97,92 @@
 
 @endsection
 
-<!-- Include Google Maps API Script -->
-<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAP_KEY') }}&callback=initAutocomplete&libraries=places&loading=async&v=weekly" defer></script>
+
+
 
 <script>
     let autocomplete;
-    let addressField;
-    let useLocationBtn = document.getElementById('useLocationBtn');
-    let cityDropdown = document.getElementById('city');
-    let areaDropdown = document.getElementById('area');
-    let streetField = document.getElementById('street');
+    let address1Field;
+    let cityField;
+    let areaField;
+    let subAreaField;
+    let lat_route;
+    let lng_route;
 
-    // Initialize Google Maps Autocomplete
+    // Initialize the Google Places Autocomplete API
     function initAutocomplete() {
-        addressField = streetField;
+        address1Field = document.querySelector("#user_address");
+        cityField = document.querySelector("#city");
+        areaField = document.querySelector("#area");
+        subAreaField = document.querySelector("#sub_area");
+        lat_route = document.querySelector("#lat_route");
+        lng_route = document.querySelector("#lng_route");
 
-        // Setup the autocomplete on the address field (street address)
-        autocomplete = new google.maps.places.Autocomplete(addressField, {
-            types: ['geocode'],  // Restrict to geocode (places with a physical address)
-            componentRestrictions: { country: 'US' }  // Adjust the country as needed
+        autocomplete = new google.maps.places.Autocomplete(address1Field, {
+            fields: ["address_components", "geometry"],
+            types: ["geocode"],
         });
 
-        // Add listener to handle the place selection
-        autocomplete.addListener('place_changed', function() {
-            let place = autocomplete.getPlace();
-
-            if (!place.geometry) {
-                return;
-            }
-
-            // Handle the selected place
-            console.log('Selected place:', place);
-        });
+        // Listen to place changed event
+        autocomplete.addListener("place_changed", fillInAddress);
     }
 
-    // Call this function in the script tag in your layout as part of the script URL
-    window.initAutocomplete = initAutocomplete;
-
-    // Function to get current location
-  // Function to use the current location
- 
-  function useCurrentLocation() {
-      if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-              const lat = position.coords.latitude;
-              const lng = position.coords.longitude;
-
-              // Use Google Maps Geocoder to get address from lat/lng
-              const geocoder = new google.maps.Geocoder();
-              const latLng = new google.maps.LatLng(lat, lng);
-
-              geocoder.geocode({ 'location': latLng }, function(results, status) {
-                  if (status === google.maps.GeocoderStatus.OK) {
-                      if (results[0]) {
-                          let city = '';
-                          let area = '';
-                          let street = results[0].formatted_address;
-
-                          // Loop through address components and extract city, area, and street
-                          results[0].address_components.forEach(function(component) {
-                              if (component.types.includes("locality")) {
-                                  city = component.long_name;
-                              } else if (component.types.includes("neighborhood")) {
-                                  area = component.long_name;
-                              }
-                          });
-
-                          // Check if the city is one of the static cities (Islamabad, Lahore, Karachi)
-                          if (city === 'Islamabad' || city === 'Lahore' || city === 'Karachi') {
-                              // Fill in city, area, and street fields
-                              document.getElementById('city').value = city;
-                              document.getElementById('area').value = area;
-                              document.getElementById('street').value = street;
-                          } else {
-                              alert('Current location is not within the allowed cities (Islamabad, Lahore, Karachi).');
-                          }
-                      }
-                  } else {
-                      alert('Geocoder failed due to: ' + status);
-                  }
-              });
-          }, function(error) {
-              if (error.code === error.PERMISSION_DENIED) {
-                  alert('Geolocation permission denied. Please allow location access.');
-              }
-          });
-      } else {
-          alert('Geolocation is not supported by this browser.');
-      }
-  }
-
- 
-    document.getElementById('city').addEventListener('change', function () {
-        const selectedCity = this.value;
-        const areaDropdown = document.getElementById('area');
-
-        areaDropdown.innerHTML = '<option value="">Loading...</option>';
-
-        if (!selectedCity) {
-            areaDropdown.innerHTML = '<option value="">Select Area</option>';
+    // Fill in the form fields when an address is selected
+    function fillInAddress() {
+        const place = autocomplete.getPlace();
+        
+        if (!place.geometry) {
+            console.log("Place has no geometry");
             return;
         }
 
-        fetch(`/api/areas?city=${encodeURIComponent(selectedCity)}`)
-            .then(response => response.json())
-            .then(areas => {
-                areaDropdown.innerHTML = '<option value="">Select Area</option>';
-                areas.forEach(area => {
-                    const option = document.createElement('option');
-                    option.value = area;
-                    option.text = area;
-                    areaDropdown.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching areas:', error);
-                areaDropdown.innerHTML = '<option value="">Error loading areas</option>';
-            });
-    });
+        // Get latitude and longitude from the selected place
+        let latitude = place.geometry.location.lat();
+        let longitude = place.geometry.location.lng();
+        lat_route.value = latitude;
+        lng_route.value = longitude;
 
+        let address1 = "";
+        let city = "";
+        let area = "";
+        let subArea = "";
 
+        // Loop through the address components and fill in the fields
+        for (const component of place.address_components) {
+            const componentType = component.types[0];
 
+            switch (componentType) {
+                case "street_number":
+                    address1 = `${component.long_name} ${address1}`;
+                    break;
+                case "route":
+                    address1 += component.short_name;
+                    break;
+                case "locality": // City
+                    city = component.long_name;
+                    break;
+                case "sublocality_level_1": // Area
+                    area = component.long_name;
+                    break;
+                case "sublocality_level_2": // Sub Area
+                    subArea = component.long_name;
+                    break;
+                case "country": // Country (optional)
+                    break;
+            }
+        }
 
-    // Event listener for the "Use Current Location" button
-    // useLocationBtn.addEventListener('click', useCurrentLocation);
+        // Set the values in the respective fields
+        address1Field.value = address1;
+        cityField.value = city;
+        areaField.value = area;
+        subAreaField.value = subArea;
+    }
+
+    window.initAutocomplete = initAutocomplete;
 </script>
+
+
 
 <style>
     .form-control {
@@ -228,12 +193,6 @@
     .btn-primary {
         border-radius: 50px;
         padding: 10px 30px;
-    }
-
-    .btn-secondary {
-        border-radius: 50px;
-        padding: 10px 30px;
-        margin-top: 15px;
     }
 
     h5 {
