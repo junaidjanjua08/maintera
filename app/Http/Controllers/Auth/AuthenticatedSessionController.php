@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->route('technician.dashboard');
             }
     
-            return redirect()->route('dashboard');
+            return redirect()->route('home');
         }
     
         // Get the role from the query string (if available) or session (if stored previously)
@@ -44,25 +44,34 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        // dd($request);
-        // Authenticate the user
+        // Attempt authentication
         $request->authenticate();
     
-        // Regenerate the session after successful login
-        $request->session()->regenerate();
-    
-        // Redirect the user based on their role
+        // Get the authenticated user
         $user = Auth::user();
     
+        // Check if the technician is inactive
+        if ($user->role === 'technician' && $user->status === 'inactive') {
+            Auth::logout(); // Log the user out
+            return redirect()->route('login')->with(
+                'sweet_error', 'Your account is under review. Please wait for approval.'
+            );
+            
+        }
+    
+        // Regenerate session
+        $request->session()->regenerate();
+    
+        // Redirect based on role
         if ($user->role === 'customer') {
             return redirect()->route('home');
         } elseif ($user->role === 'technician') {
             return redirect()->route('technician.dashboard');
         }
     
-        // Fallback to the default home route
         return redirect()->intended(RouteServiceProvider::HOME);
     }
+    
     
 
     /**

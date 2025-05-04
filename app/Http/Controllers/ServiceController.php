@@ -12,10 +12,11 @@ class ServiceController extends Controller
 {
     public function services()
     {
+        
         // Fetch all services
-        $services = Service::with('category')->get();
+        $serviceCategories = ServiceCategory::all();
 
-        return view('services.index', compact('services'));
+        return view('services', compact('serviceCategories'));
     }
     public function home()
     {
@@ -30,7 +31,6 @@ public function ServiceBooking($id)
 {
     // Fetch the service details based on the ID
     $service = Service::findOrFail($id);
-    
     // Return the view and pass the service data
     return view('booking', compact('service'));
 }

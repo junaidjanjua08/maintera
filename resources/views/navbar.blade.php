@@ -18,8 +18,8 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
   <div class="navbar-nav ms-auto py-3 py-lg-0">
     <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
     <a href="{{ route('about-us') }}" class="nav-item nav-link">About Us</a>
-    <a href="{{ route('services') }}" class="nav-item nav-link">Services</a>
-    <div class="nav-item dropdown">
+    <a href="{{ route('getservices') }}" class="nav-item nav-link">Services</a>
+    {{-- <div class="nav-item dropdown">
       <a
         href="#"
         class="nav-link dropdown-toggle"
@@ -33,7 +33,7 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
         <a href="testimonial.html" class="dropdown-item">Testimonial</a>
         <a href="{{ route('404') }}" class="dropdown-item">404 Page</a>
       </div>
-    </div>
+    </div> --}}
     {{-- <a href="{{ route('contact-us') }}" class="nav-item nav-link">Contact Us</a> --}}
     @php
     $user = Auth::user();
@@ -48,7 +48,7 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
     @if(Auth::user() && Auth::user()->role === 'customer')
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          | Junaid
+          | {{ Auth::user()->name }}
       </a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
           <a class="dropdown-item" href="{{ route('profile.edit')}}">Profile</a>
@@ -61,6 +61,11 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
   </li>
   
       @endif
+
+
+
+      
+
 
   </div>
 </div>

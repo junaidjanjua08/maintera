@@ -41,18 +41,18 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role, // Assign role
+            'role' => $request->role,
+            'status' => $request->role === 'technician' ? 'inactive' : 'active', // Set status based on role
         ]);
 
         event(new Registered($user));
-
+        if ($user->role === 'technician') {
+            return redirect()->route('login')->with('sweet_success', 'Your registration request is under review.');
+        }
         Auth::login($user);
 
-        // Redirect based on role
-        if ($user->role === 'technician') {
-            return redirect()->route('technician.dashboard'); // Define route in web.php
-        }
+      
 
-        return redirect()->route('dashboard'); // Default redirection for customers
+        return redirect()->route('home'); // Default redirection for customers
     }
 }

@@ -202,38 +202,78 @@
             </div>
         </div>
         <!-- Features End -->
-
+        @php
+        $icons = [
+            'Electrical'     => 'fa-bolt',
+            'Plumbing'       => 'fa-faucet',
+            'AC Repair'      => 'fa-wind',
+            'Painting'       => 'fa-paint-roller',
+            'Carpentry'      => 'fa-hammer',
+            'Cleaning'       => 'fa-broom',
+            'Appliance Repair' => 'fa-tools',
+            'Pest Control'   => 'fa-bug',
+            'Roofing'        => 'fa-house-chimney',
+            'Masonry'        => 'fa-bricks',
+            'Landscaping'    => 'fa-seedling',
+            'Gardening'      => 'fa-leaf',
+            'Security'       => 'fa-shield-halved',
+            'Flooring'       => 'fa-border-all',
+            'Glass Repair'   => 'fa-window-maximize',
+            'Locksmith'      => 'fa-key',
+            'Moving'         => 'fa-truck-moving',
+            'HVAC'           => 'fa-fan',
+            'Home Automation'=> 'fa-house-signal',
+            'Interior Design'=> 'fa-couch',
+            'Furniture Assembly' => 'fa-screwdriver-wrench',
+            'Solar Installation' => 'fa-solar-panel',
+            'Water Purification' => 'fa-water',
+            'Welding'        => 'fa-fire',
+            'Computer Repair'=> 'fa-computer',
+            'Mobile Repair'  => 'fa-mobile-screen',
+            'Laundry'        => 'fa-shirt',
+            'CCTV Installation' => 'fa-video',
+            'Disinfection'   => 'fa-pump-soap',
+            'Window Cleaning'=> 'fa-spray-can-sparkles',
+        ];
+    @endphp
         <div class="container">
             <hr>
         </div>
         <!-- Service Start -->
         <div class="container">
-          <div class="row g-5 align-items-end mb-5">
-              <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
-                  <div class="border-start border-5 border-primary ps-4">
-                      <h1 class="display-6 mb-0">Services</h1>
-                  </div>
-              </div>
-          </div>
+            <div class="row g-5 align-items-end mb-5">
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="border-start border-5 border-primary ps-4">
+                        <h1 class="display-6 mb-0">Services</h1>
+                    </div>
+                </div>
+            </div>
+           
+        
+            <div class="row g-4 justify-content-center">
+                @foreach($serviceCategories as $category)
+              
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                  <div class="service-item bg-light overflow-hidden h-100">
+                      <div class="service-text position-relative text-center h-100 p-4">
+                          {{-- Font Awesome Icon --}}
+                          <div class="mb-3">
+                            <i class="fa {{ $icons[$category->name] ?? 'fa-tools' }} fa-3x text-primary"></i>
       
-          <div class="row g-4 justify-content-center">
-              @foreach($serviceCategories as $category)
-                  <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                      <div class="service-item bg-light overflow-hidden h-100">
-                          <!-- Replace with your icons or use FA icons if available -->
-                          <div class="service-text position-relative text-center h-100 p-4">
-                              <h5 class="mb-3">{{ $category->name }}</h5>
-                              <p>
-                                  {{ $category->description ?? 'Description for the category goes here.' }}
-                              </p>
-                              <a class="small" href="{{ route('subservices', ['category' => $category->id]) }}">Book Service<i class="fa fa-arrow-right ms-3"></i></a>
-
                           </div>
+              
+                          <h5 class="mb-3">{{ $category->name }}</h5>
+                          <p>{{ $category->description ?? 'Description for the category goes here.' }}</p>
+                          <a class="small" href="{{ route('subservices', ['category' => $category->id]) }}">
+                              Book Service <i class="fa fa-arrow-right ms-3"></i>
+                          </a>
                       </div>
                   </div>
-              @endforeach
-          </div>
-      </div>
+              </div>
+              
+                @endforeach
+            </div>
+        </div>
       
         <!-- Service End -->
 

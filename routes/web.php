@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -21,7 +22,8 @@ Route::get('/services/{category}', [ServiceController::class, 'showServices'])->
 
 
 
-Route::get('/services', [ServiceController::class, 'services'])->name('services');
+Route::get('/services', [ServiceController::class, 'services'])->name('customer.services');
+Route::get('/getcategories',[ServiceController::class, 'services'])->name('getservices');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -60,6 +62,14 @@ Route::get('/cards', function () {
 Route::get('/forms', function () {
     return view('admin.forms');
 })->name('admin.forms');
+
+Route::get('/admin/inactive-technicians', [AdminController::class, 'inactiveTechnicians'])->name('admin.inactive.technicians');
+Route::get('/admin/accepted-technicians/{id}', [AdminController::class, 'AcceptedTechnicians'])->name('admin.technicians.accept');
+Route::get('/admin/rejected-technicians/{id}', [AdminController::class, 'RejectedTechnicians'])->name('admin.technicians.reject');
+Route::get('/services', [AdminController::class, 'index'])->name('admin.services');
+Route::post('/services/category', [AdminController::class, 'storeCategory'])->name('admin.services.storeCategory');
+Route::post('/services', [AdminController::class, 'storeService'])->name('admin.services.store');
+Route::delete('/services/{service}', [AdminController::class, 'destroyService'])->name('admin.services.delete');
 Route::get('/charts', function () {
     return view('admin.manage-services');
 })->name('admin.manage-services');
