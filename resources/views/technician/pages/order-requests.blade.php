@@ -87,93 +87,47 @@
 
     </style>
 
-    <div class="row">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h2 class="fw-bold " style="font-size: 1.8rem; color: #1f2937;">📦 Order Requests</h2>
-            <span class="badge bg-success text-white px-3 py-2" style="border-radius: 12px; font-size: 0.9rem;">
-                5 Orders Requests
-            </span>
-        </div>
-        
-        <div class="col-md-12 mb-4">
-            <div class="order-card">
-                <div class="order-badge badge-new">New</div>
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div class="me-3">
-                        <div class="order-title">Air Conditioner Repair</div>
-                        <div class="order-desc">No cooling and making loud noise — urgent summer fix needed.</div>
-                    </div>
-                    <div class="text-end mt-3 mt-md-0">
-                        <div class="order-location">G-10 Islamabad</div>
-                        <button class="view-btn">View Order</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-12 mb-4">
-            <div class="order-card">
-                <div class="order-badge badge-viewed">Viewed</div>
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div class="me-3">
-                        <div class="order-title">Water Leakage Fix</div>
-                        <div class="order-desc">Leak under sink causing kitchen flooding. Needs plumber.</div>
-                    </div>
-                    <div class="text-end mt-3 mt-md-0">
-                        <div class="order-location">DHA Phase 2</div>
-                        <button class="view-btn">View Order</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-12 mb-4">
-            <div class="order-card">
-                <div class="order-badge badge-new">New</div>
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div class="me-3">
-                        <div class="order-title">LED TV Installation</div>
-                        <div class="order-desc">Mount 55” Smart TV on bedroom wall with concealed wiring.</div>
-                    </div>
-                    <div class="text-end mt-3 mt-md-0">
-                        <div class="order-location">Bahria Town Phase 7</div>
-                        <button class="view-btn">View Order</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-12 mb-4">
-            <div class="order-card">
-                <div class="order-badge badge-viewed">Viewed</div>
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div class="me-3">
-                        <div class="order-title">Washing Machine Service</div>
-                        <div class="order-desc">Drainage issue suspected. Machine not finishing cycles.</div>
-                    </div>
-                    <div class="text-end mt-3 mt-md-0">
-                        <div class="order-location">F-11 Markaz</div>
-                        <button class="view-btn">View Order</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-12 mb-4">
-            <div class="order-card">
-                <div class="order-badge badge-new">New</div>
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div class="me-3">
-                        <div class="order-title">Ceiling Fan Replacement</div>
-                        <div class="order-desc">Old fan removed and new one installed by customer’s request.</div>
-                    </div>
-                    <div class="text-end mt-3 mt-md-0">
-                        <div class="order-location">I-8 Sector</div>
-                        <button class="view-btn">View Order</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+<div class="row">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="fw-bold" style="font-size: 1.8rem; color: #1f2937;">📦 Order Requests</h2>
+        <span class="badge bg-success text-white px-3 py-2" style="border-radius: 12px; font-size: 0.9rem;">
+            {{ count($requested_orders) }}
+        </span>
     </div>
+
+    @foreach ($requested_orders as $order)
+        <div class="col-md-12 mb-4">
+            <div class="order-card">
+                <div class="order-badge badge-new">New</div>
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="me-3">
+                        <div class="order-title">{{ $order->subcategory->name }}</div>
+                        <div class="order-desc">{{ $order->description }}</div>
+                    </div>
+                    <div class="text-end mt-3 mt-md-0">
+                        <div class="order-location">{{ $order->area . $order->city }}</div>
+
+                        <form method="POST" action="{{ route('technician.order.view') }}">
+                            @csrf
+                            <input type="hidden" name="subcategory_name" value="{{ $order->subcategory->name }}">
+                            <input type="hidden" name="description" value="{{ $order->description }}">
+                            <input type="hidden" name="area" value="{{ $order->area }}">
+                            <input type="hidden" name="order_id" value="{{ $order->id }}">
+                            <input type="hidden" name="city" value="{{ $order->city }}">
+                            <input type="hidden" name="customer_name" value="{{ $order->customer->name }}">
+                            <input type="hidden" name="email" value="{{ $order->customer->email }}">
+                            <input type="hidden" name="phone" value="{{ $order->customer->phone }}">
+                            <input type="hidden" name="address" value="{{ $order->street_address }}">
+                            <input type="hidden" name="status" value="{{ $order->status }}">
+                            <input type="hidden" name="route" value="{{ route('technician.orders.requests') }}">
+
+                            <button type="submit" class="view-btn">View Order</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+
     @endsection

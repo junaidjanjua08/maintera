@@ -89,57 +89,43 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>⏳ Pending Orders</h2>
         <span class="badge bg-success text-white px-3 py-2" style="border-radius: 12px; font-size: 0.9rem;">
-            5 Orders Pending
+            {{ count($pending_orders) }} Orders Pending
         </span>
     </div>
 
+    @foreach ($pending_orders as $order)
     <div class="col-md-12 mb-4">
         <div class="order-card">
-            <div class="order-badge badge-pending">Pending</div>
+            <div class="order-badge badge-new">New</div>
             <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div class="me-3">
-                    <div class="order-title">Microwave Repair</div>
-                    <div class="order-desc">Buttons not responding, needs internal inspection and fix.</div>
+                    <div class="order-title">{{ $order->order->subcategory->name }}</div>
+                    <div class="order-desc">{{ $order->order->description }}</div>
                 </div>
                 <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">PWD Islamabad</div>
-                    <button class="view-btn">View Order</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <div class="order-location">{{ $order->order->area . $order->order->city }}</div>
 
-    <div class="col-md-12 mb-4">
-        <div class="order-card">
-            <div class="order-badge badge-pending">Pending</div>
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="me-3">
-                    <div class="order-title">Fridge Cooling Issue</div>
-                    <div class="order-desc">Not freezing properly, customer suspects gas leakage.</div>
-                </div>
-                <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">Gulberg Greens</div>
-                    <button class="view-btn">View Order</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12 mb-4">
-        <div class="order-card">
-            <div class="order-badge badge-pending">Pending</div>
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="me-3">
-                    <div class="order-title">Gas Geyser Maintenance</div>
-                    <div class="order-desc">Flame not lighting up, regular cleaning overdue.</div>
-                </div>
-                <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">F-6 Islamabad</div>
-                    <button class="view-btn">View Order</button>
+                    <form method="POST" action="{{ route('technician.order.view') }}">
+                        @csrf
+                        <input type="hidden" name="subcategory_name" value="{{ $order->order->subcategory->name }}">
+                        <input type="hidden" name="description" value="{{ $order->order->description }}">
+                        <input type="hidden" name="area" value="{{ $order->order->area }}">
+                        <input type="hidden" name="order_id" value="{{ $order->order->id }}">
+                        <input type="hidden" name="city" value="{{ $order->order->city }}">
+                        <input type="hidden" name="customer_name" value="{{ $order->order->customer->name }}">
+                        <input type="hidden" name="email" value="{{ $order->order->customer->email }}">
+                        <input type="hidden" name="phone" value="{{ $order->order->customer->phone }}">
+                        <input type="hidden" name="address" value="{{ $order->order->street_address }}">
+                        <input type="hidden" name="status" value="{{ $order->order->status }}">
+                        <input type="hidden" name="route" value="{{ route('technician.orders.pending') }}">
+                        
+                        <button type="submit" class="view-btn">View Order</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+@endforeach
 
 </div>
 @endsection

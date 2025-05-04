@@ -21,5 +21,10 @@ class ServiceCategory extends Model
     {
         return $this->hasMany(Service::class, 'category_id'); // Ensure the correct foreign key
     }
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'subcategory_id'); // Ensure the correct foreign key
+    }
+
 }
 

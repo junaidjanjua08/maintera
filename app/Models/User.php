@@ -43,4 +43,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function fareOffers()
+{
+    return $this->hasMany(FareOffer::class, 'technician_id');
+}
+
+
+// If the user is a customer
+public function givenReviews()
+{
+    return $this->hasMany(OrderReview::class, 'customer_id')->where('role', 'customer');
+}
+
+// If the user is a technician
+public function receivedReviews()
+{
+    return $this->hasMany(OrderReview::class, 'technician_id')->where('role', 'technician');
+}
+
+public function order(){
+    return $this->hasMany(Order::class, 'user_id');
+
+}
+
 }

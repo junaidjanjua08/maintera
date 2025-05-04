@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             ServiceCategorySeeder::class,
             ServiceSeeder::class,
             ServiceCategoryServiceSeeder::class, // Optional: If using pivot table for services and categories
+            OrdersTableSeeder::class, // Optional: If using pivot table for services and categories
         ]);
     }
 }

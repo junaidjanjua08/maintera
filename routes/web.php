@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TechnicianController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -16,7 +18,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/services/{category}', [ServiceController::class, 'showServices'])->name('subservices');
 // web.php (Routes file)
-Route::get('/book-service/{id}', [ServiceController::class, 'ServiceBooking'])->name('service.booking');
+
 
 
 Route::get('/services', [ServiceController::class, 'services'])->name('services');
@@ -24,9 +26,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/profile', function () {
-        return view('404');
-    })->name('profile');
+    // Route::get('/profile', function () {
+    //     return view('404');
+    // })->name('profile');
+    Route::get('/book-service/{id}', [ServiceController::class, 'ServiceBooking'])->name('service.booking');
+    Route::post('/submit-booking', [ServiceController::class, 'OrderBooking'])->name('service.order');
+
 });
 
 Route::get('/about', function () {
@@ -79,30 +84,49 @@ Route::get('/admin-login', function () {
 // technician routes
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('tech-dashboard', function () {
-        return view('technician.index');
-    })->name('technician.dashboard');
+  
+    Route::get('/tech-dashboard', [TechnicianController::class, 'index'])->name('technician.dashboard');
     Route::get('edit-profile', function () {
         return view('technician.pages.edit_profile');
     })->name('technician.editprofile');
-    Route::get('settings', function () {
-        return view('technician.pages.settings');
-    })->name('technician.settings');
+  
+   
+    // Show the settings page
+Route::get('/technician/settings', [TechnicianController::class, 'settings'])->name('technician.settings');
+
+// Handle form submissions for updating email and password
+Route::post('/technician/settings/email', [TechnicianController::class, 'updateEmail'])->name('technician.updateEmail');
+Route::post('/technician/settings/password', [TechnicianController::class, 'updatePassword'])->name('technician.updatePassword');
+
+// Handle account deletion
+Route::post('/technician/settings/delete', [TechnicianController::class, 'deleteAccount'])->name('technician.deleteAccount');
+
+
     Route::get('layouts', function () {
         return view('technician.pages.layout');
     })->name('technician.layout');
     Route::get('pricing', function () {
         return view('technician.pages.pricing');
     })->name('technician.pricing');
-    Route::get('order/requests', function () {
-        return view('technician.pages.order-requests');
-    })->name('technician.orders.requests');
-    Route::get('order/pending', function () {
-        return view('technician.pages.pending-orders');
-    })->name('technician.orders.pending');
+    Route::get('order/requests', [OrderController::class, 'order_requests'])->name('technician.orders.requests');
+    Route::post('order/view', [OrderController::class, 'view_order'])->name('technician.order.view');
+
+    Route::get('order/pending', [OrderController::class, 'pending_orders'])->name('technician.orders.pending');
+   
     Route::get('order/completed', function () {
         return view('technician.pages.completed-orders');
     })->name('technician.orders.completed');
+
+
+    Route::post('/fare-offer', [OrderController::class, 'Offer_Fair'])->name('technician.fare.offer');
+
+    Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('technician.orders.updateStatus');
+    Route::post('/orders/status/update', [OrderController::class, 'updateStatus'])->name('technician.orders.updateStatus');
+
+
+
+
+   
 });
 
 
