@@ -59,18 +59,14 @@
               <div class="border-start border-5 border-primary ps-4 mb-5">
                 <h6 class="text-body text-uppercase mb-2">About Us</h6>
                 <h1 class="display-6 mb-0">
-                  Unique Solutions For Residentials & Industries!
+                  Maintera is a smart maintenance management platform.
                 </h1>
               </div>
               <p>
-                Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit.
-                Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit,
-                sed stet lorem sit clita duo justo magna dolore erat amet
+                Maintera is a smart maintenance management platform that connects customers and technicians for fast, reliable service. 
               </p>
               <p class="mb-4">
-                Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit.
-                Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit,
-                sed stet lorem sit clita duo justo magna dolore erat amet
+                We simplify bookings, track tasks, and streamline communication to deliver efficient maintenance solutions.
               </p>
               <div class="border-top mt-4 pt-4">
                 <div class="row g-4">
