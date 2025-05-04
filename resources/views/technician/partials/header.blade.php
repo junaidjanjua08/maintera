@@ -130,7 +130,7 @@
       
             <!-- Account Settings -->
             <li>
-                <a class="dropdown-item" href="#">
+                <a class="dropdown-item" href="{{ route('technician.settings') }}">
                     <i class="me-2 icon-xxs dropdown-item-icon" data-feather="settings"></i> Account Settings
                 </a>
             </li>

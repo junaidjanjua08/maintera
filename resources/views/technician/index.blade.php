@@ -7,6 +7,7 @@
   </head>
 
   <body>
+   
     <div id="db-wrapper">
       <!-- navbar vertical -->
       @include('technician/partials/navbar-vertical')
@@ -23,6 +24,11 @@
 
     <!-- Scripts -->
     @include("technician/partials/scripts ")
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- SweetAlert session handler -->
+<x-alerts.sweet-alert />
+    <x-toast-messages />
 
 
   </body>

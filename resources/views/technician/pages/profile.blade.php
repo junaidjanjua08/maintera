@@ -1,19 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-   @include('technician.partials.head')
-  <title>Profile Overview | Dash Ui - Bootstrap 5 Admin Dashboard Template</title>
-</head>
-
-<body>
-  <div id="db-wrapper">
-    <!-- navbar vertical -->
-    @@include('../partials/navbar-vertical.html', { "page": "profile", "page_group": "pages" })
-    <!-- page content -->
-    <div id="page-content">
-      @include('technician/partials/header')
-      <!-- Container fluid -->
+@extends('technician.index')
       <div class="container-fluid px-6 py-4">
         <div class="row">
           <div class="col-lg-12 col-md-12 col-12">
@@ -665,8 +651,4 @@
       </div>
     </div>
   </div>
-  <!-- Scripts -->
- @include('technician.partials.scripts')
-</body>
-
-</html>
+@endsection

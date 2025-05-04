@@ -35,10 +35,15 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
       </div>
     </div>
     {{-- <a href="{{ route('contact-us') }}" class="nav-item nav-link">Contact Us</a> --}}
-    <a href="{{ Auth::check() && Auth::user()->role === 'technician' ? route('technician.dashboard') : route('login', ['role' => 'technician']) }}" class="nav-item nav-link">
-      Technician
-  </a>
-  
+    @php
+    $user = Auth::user();
+@endphp
+
+@if(!Auth::check() || (Auth::check() && $user->role !== 'customer'))
+    <a href="{{ Auth::check() && $user->role === 'technician' ? route('technician.dashboard') : route('login', ['role' => 'technician']) }}" class="nav-item nav-link">
+        Technician
+    </a>
+@endif
 
     @if(Auth::user() && Auth::user()->role === 'customer')
     <li class="nav-item dropdown">
@@ -46,7 +51,7 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
           | Junaid
       </a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-          <a class="dropdown-item" href="{{ route('profile') }}">Profile</a>
+          <a class="dropdown-item" href="{{ route('profile.edit')}}">Profile</a>
           <div class="dropdown-divider"></div>
           <form method="POST" action="{{ route('logout') }}">
               @csrf

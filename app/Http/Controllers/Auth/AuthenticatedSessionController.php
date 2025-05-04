@@ -15,10 +15,29 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(Request $request)
     {
-        return view('auth.login');
+        
+        // Check if the user is already logged in
+        if (Auth::check()) {
+            // Redirect the authenticated user to their dashboard based on their role
+            $user = Auth::user();
+            
+            if ($user->role === 'technician') {
+                return redirect()->route('technician.dashboard');
+            }
+    
+            return redirect()->route('dashboard');
+        }
+    
+        // Get the role from the query string (if available) or session (if stored previously)
+        $role = $request->query('role') ?? session('role');
+        
+        // Pass the role to the view
+        return view('auth.login', compact('role'));
     }
+    
+    
 
     /**
      * Handle an incoming authentication request.
@@ -36,7 +55,7 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
     
         if ($user->role === 'customer') {
-            return redirect()->route('dashboard');
+            return redirect()->route('home');
         } elseif ($user->role === 'technician') {
             return redirect()->route('technician.dashboard');
         }
