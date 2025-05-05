@@ -3,7 +3,7 @@
 
   <head>
      @include('technician.partials.head')
-    <title>Layout | Dash Ui - Bootstrap 5 Admin Dashboard Template</title>
+    <title>Layout | Maintera - Technicians 5 Admin Dashboard Template</title>
   </head>
 
   <body>

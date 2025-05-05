@@ -68,7 +68,7 @@
             <li class="nav-item mt-3 px-4 text-muted small text-uppercase">Layout</li>
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('technician.layouts') ? 'active' : '' }}"
-                   href="@@webRoot/pages/layout.html">
+                   href="{{ route('technician.404') }}">
                     <i data-feather="sidebar" class="nav-icon icon-xs me-2"></i>
                     Layouts
                 </a>
@@ -78,7 +78,7 @@
             <li class="nav-item mt-3 px-4 text-muted small text-uppercase">Documentation</li>
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('technician.docs') ? 'active' : '' }}"
-                   href="@@webRoot/docs/index.html">
+                   href="{{ route('technician.404') }}">
                     <i data-feather="clipboard" class="nav-icon icon-xs me-2"></i>
                     Docs
                 </a>

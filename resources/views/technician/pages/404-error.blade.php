@@ -3,7 +3,7 @@
 
   <head>
      @include('technician.partials.head')
-    <title>404 error | Dash Ui - Bootstrap 5 Admin Dashboard Template </title>
+    <title>404 error | Maintera - Technicians 5 Admin Dashboard Template </title>
   </head>
 
   <body>

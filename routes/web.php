@@ -120,7 +120,7 @@ Route::post('/technician/settings/delete', [TechnicianController::class, 'delete
 
     Route::get('order/pending', [OrderController::class, 'pending_orders'])->name('technician.orders.pending');
    
-    Route::get('order/completed', function () {
+    Route::get('404', function () {
         return view('technician.pages.404-error');
     })->name('technician.404');
     Route::get('/tech-404', function () {
