@@ -9,7 +9,7 @@
                 <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
                     aria-hidden="true"></span>
                 <a class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
-                    href="index.html">
+                    href="{{ route('admin-dashboard') }}">
                     <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
                         <path
@@ -77,7 +77,7 @@
                         <path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
                         <path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
                     </svg>
-                    <span class="ml-4">Manage TEchnician</span>
+                    <span class="ml-4">Manage Technician</span>
                 </a>
             </li>
             <li class="relative px-6 py-3">
@@ -100,7 +100,7 @@
                     <span class="ml-4">Customer Queries</span>
              </a>
             </li>
-            <li class="relative px-6 py-3">
+            {{-- <li class="relative px-6 py-3">
                 <button
                     class="inline-flex items-center justify-between w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                     @click="togglePagesMenu" aria-haspopup="true">
@@ -155,15 +155,15 @@
                         </li>
                     </ul>
                 </template>
-            </li>
+            </li> --}}
         </ul>
-        <div class="px-6 my-6">
+        {{-- <div class="px-6 my-6">
             <button
                 class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
                 Create account
                 <span class="ml-2" aria-hidden="true">+</span>
             </button>
-        </div>
+        </div> --}}
     </div>
 </aside>
 <!-- Mobile sidebar -->

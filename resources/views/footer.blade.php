@@ -38,14 +38,14 @@ data-wow-delay="0.1s"
       <h4 class="text-light mb-4">Quick Links</h4>
          <a href="{{ route('home') }}" class="nav-item nav-link active">Home</a>
     <a href="{{ route('about-us') }}" class="nav-item nav-link">About Us</a>
-    <a href="{{ route('services') }}" class="nav-item nav-link">Services</a>
+    <a href="{{ route('getservices') }}" class="nav-item nav-link">Services</a>
       <a href="{{ route('contact-us') }}" class="nav-item nav-link">Contact Us</a>
       {{-- <a class="nav-item nav-link" href="">Terms & Condition</a> --}}
     </div>
     {{-- <div class="col-lg-3 col-md-6">
       <h4 class="text-light mb-4">Newsletter</h4>
       <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-      <div class="position-relative mx-auto" style="max-width: 400px">
+      <div class="position-relative mx-auto" style="max-width: 400px">  
         <input
           class="form-control bg-transparent w-100 py-3 ps-4 pe-5"
           type="text"

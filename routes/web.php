@@ -19,18 +19,14 @@ Route::get('/dashboard', function () {
 
 Route::get('/services/{category}', [ServiceController::class, 'showServices'])->name('subservices');
 // web.php (Routes file)
-
-
-
 Route::get('/services', [ServiceController::class, 'services'])->name('customer.services');
 Route::get('/getcategories',[ServiceController::class, 'services'])->name('getservices');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    // Route::get('/profile', function () {
-    //     return view('404');
-    // })->name('profile');
     Route::get('/book-service/{id}', [ServiceController::class, 'ServiceBooking'])->name('service.booking');
     Route::post('/submit-booking', [ServiceController::class, 'OrderBooking'])->name('service.order');
 
@@ -55,7 +51,8 @@ Route::get('/404', function () {
 // admin routes
 Route::get('/admin-dashboard', function () {
     return view('admin.index');
-});
+})->name('admin-dashboard');
+Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('admin-dashboard');
 Route::get('/cards', function () {
     return view('admin.accepted-requests');
 })->name('admin.accepted-requests');
@@ -124,6 +121,9 @@ Route::post('/technician/settings/delete', [TechnicianController::class, 'delete
     Route::get('order/pending', [OrderController::class, 'pending_orders'])->name('technician.orders.pending');
    
     Route::get('order/completed', function () {
+        return view('technician.pages.404-error');
+    })->name('technician.404');
+    Route::get('/tech-404', function () {
         return view('technician.pages.completed-orders');
     })->name('technician.orders.completed');
 

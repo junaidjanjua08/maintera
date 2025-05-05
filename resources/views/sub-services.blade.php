@@ -49,7 +49,7 @@
                                     {{ Str::limit($service->description, 100) }}
                                 </p>
                                 <a class="small" href="{{ route('service.booking', $service->id) }}">
-                                    READ MORE <i class="fa fa-arrow-right ms-3"></i>
+                                    Book Service <i class="fa fa-arrow-right ms-3"></i>
                                 </a>
                             </div>
                         </div>

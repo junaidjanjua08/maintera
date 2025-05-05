@@ -14,7 +14,7 @@
             </div>
             <div>
                 <h2 class="text-gray-600 text-sm font-semibold">Total Customers</h2>
-                <p class="text-2xl font-bold text-blue-600">120</p>
+                <p class="text-2xl font-bold text-blue-600">{{ $customers ? $customers : '0' }}</p>
             </div>
         </div>
     </a>
@@ -31,7 +31,7 @@
             </div>
             <div>
                 <h2 class="text-gray-600 text-sm font-semibold">Total Technicians</h2>
-                <p class="text-2xl font-bold text-green-600">35</p>
+                <p class="text-2xl font-bold text-green-600">{{ $technicians ? $technicians : '0' }}</p>
             </div>
         </div>
     </a>
@@ -48,7 +48,7 @@
             </div>
             <div>
                 <h2 class="text-gray-600 text-sm font-semibold">Tech Reg. Requests</h2>
-                <p class="text-2xl font-bold text-yellow-600">7</p>
+                <p class="text-2xl font-bold text-yellow-600">{{ $tech_requests ? $tech_requests : '0'  }}</p>
             </div>
         </div>
     </a>

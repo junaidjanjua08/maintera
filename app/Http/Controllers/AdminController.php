@@ -9,6 +9,18 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+
+    public function dashboard(){
+        $customers = User::where('role','customer')->count();
+        $technicians = User::where('role','technician')->count();
+        $tech_requests = User::where('role','technician')->where('status','inactive')->count();
+        
+
+        return view('admin.index',compact('customers','technicians','tech_requests'));
+    }
+
+
+
     public function inactiveTechnicians()
 {
     $technicians = User::where('role', 'technician')
