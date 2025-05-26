@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TechnicianController;
+use App\Http\Controllers\NotificationController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -90,12 +91,13 @@ Route::get('/admin-login', function () {
 // -----------------------------------------------------------------------------------
 // technician routes
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'role:technician'])->group(function () {
   
     Route::get('/tech-dashboard', [TechnicianController::class, 'index'])->name('technician.dashboard');
     Route::get('edit-profile', function () {
         return view('technician.pages.edit_profile');
     })->name('technician.editprofile');
+    Route::get('/technician/profile/update', [TechnicianController::class, 'settings'])->name('technician.profile.update');
   
    
     // Show the settings page
@@ -135,8 +137,16 @@ Route::post('/technician/settings/delete', [TechnicianController::class, 'delete
 
 
 
+    Route::get('/technician/profile/edit', [TechnicianController::class, 'editProfile'])->name('technician.profile.edit');
+    Route::post('/technician/profile/create', [TechnicianController::class, 'createProfile'])->name('technician.profile.create');
+    Route::match(['post', 'put'], '/technician/profile/update', [TechnicianController::class, 'updateProfile'])->name('technician.profile.update');
+    Route::post('/technician/profile/availability', [TechnicianController::class, 'updateAvailability'])->name('technician.profile.availability');
 
-   
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('technician.notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('technician.notifications.mark-as-read');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('technician.notifications.mark-all-as-read');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('technician.notifications.unread-count');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('technician.notifications.destroy');
 });
 
 

@@ -44,28 +44,41 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * Get the technician profile associated with the user.
+     */
+    public function technicianProfile()
+    {
+        return $this->hasOne(TechnicianProfile::class);
+    }
 
     public function fareOffers()
-{
-    return $this->hasMany(FareOffer::class, 'technician_id');
-}
+    {
+        return $this->hasMany(FareOffer::class, 'technician_id');
+    }
 
+    // If the user is a customer
+    public function givenReviews()
+    {
+        return $this->hasMany(OrderReview::class, 'customer_id')->where('role', 'customer');
+    }
 
-// If the user is a customer
-public function givenReviews()
-{
-    return $this->hasMany(OrderReview::class, 'customer_id')->where('role', 'customer');
-}
+    // If the user is a technician
+    public function receivedReviews()
+    {
+        return $this->hasMany(OrderReview::class, 'technician_id')->where('role', 'technician');
+    }
 
-// If the user is a technician
-public function receivedReviews()
-{
-    return $this->hasMany(OrderReview::class, 'technician_id')->where('role', 'technician');
-}
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }
 
-public function order(){
-    return $this->hasMany(Order::class, 'user_id');
-
-}
-
+    /**
+     * Scope a query to only include technicians.
+     */
+    public function scopeTechnicians($query)
+    {
+        return $query->where('role', 'technician');
+    }
 }

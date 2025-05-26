@@ -54,7 +54,7 @@
 <!-- SweetAlert session handler -->
 <x-alerts.sweet-alert />
     <x-toast-messages />
-
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAP_KEY') }}&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
 </body>
 
 </html>

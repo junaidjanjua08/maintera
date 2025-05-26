@@ -13,13 +13,15 @@ class OrderController extends Controller
 
     public function order_requests()
     {
-        $requested_orders = Order::where('status', 'pending')->get();
+       $requested_orders = Order::where('status', 'pending')
+    ->orderBy('created_at', 'desc')
+    ->get();
         return view('technician.pages.order-requests', compact('requested_orders'));
     }
 
     public function pending_orders()
     {
-        
+       
         $technicianId = auth()->id(); // or Auth::user()->id
 
         $pending_orders = FareOffer::with('order')
@@ -44,9 +46,6 @@ class OrderController extends Controller
                 $query->whereIn('status',  'completed');
             })
             ->get();
-
-
-
         return view('technician.pages.completed-orders', compact('completed_orders'));
     }
 
@@ -67,8 +66,6 @@ class OrderController extends Controller
 
         $statuses = Order::distinct('status')->pluck('status');
        
-        
-    
         return view('technician.pages.orderview', compact(
             'subcategory_name',
             'description',

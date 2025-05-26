@@ -26,6 +26,10 @@ class Order extends Model
         'status',
     ];
 
+    protected $casts = [
+        'scheduled_at' => 'datetime',
+    ];
+
     // Optional: define relationships (if needed)
     public function user()
     {

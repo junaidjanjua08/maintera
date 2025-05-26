@@ -49,8 +49,8 @@
             <li class="nav-item mt-3 px-4 text-muted small text-uppercase">Account</li>
 
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('technician.404') ? 'active' : '' }}"
-                   href="{{ route('technician.404') }}">
+                <a class="nav-link {{ Route::is('technician.editprofile') ? 'active' : '' }}"
+                   href="{{ route('technician.editprofile') }}">
                     <i data-feather="user" class="nav-icon icon-xs me-2"></i>
                     Profile
                 </a>

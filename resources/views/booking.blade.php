@@ -1,68 +1,82 @@
 @extends('index')
 
 @section('content')
-<!-- Include Google Maps API Script -->
-<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAP_KEY') }}&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
-
-<!-- Booking Page Start -->
 <div class="container-xxl py-5">
     <div class="container">
-        <!-- Service Info -->
+        <!-- Service Header -->
         <div class="text-center mb-5">
             <h1 class="display-5 fw-bold text-primary">{{ $service->name }}</h1>
             <p class="lead text-muted">{{ $service->description }}</p>
         </div>
 
-        <!-- Booking Form Card -->
+        <!-- Booking Form -->
         <div class="card shadow-lg border-0">
             <div class="card-body p-5">
                 <h3 class="text-center text-secondary mb-4">Book Your Service</h3>
 
-                <form action="{{ route('service.order') }}" method="POST">
+                <form action="{{ route('service.order') }}" method="POST" id="bookingForm">
                     @csrf
                     <div class="row g-4">
+
                         <!-- Address Section -->
-                        <div class="col-md-6">
-                            <div class="bg-light p-4 rounded shadow-sm h-100">
-                                <h5 class="text-primary mb-3">Address Details</h5>
-
-                                <div class="form-group mb-3">
-                                    <label for="user_address" class="form-label">Street Address</label>
-                                    <input id="user_address" name="street_adress" type="text" class="form-control" placeholder="Enter street address">
+                        <div class="col-12">
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Your Address</h5>
                                 </div>
+                                <div class="card-body">
+                                    <div class="form-group mb-4">
+                                        <label for="address" class="form-label required-field">Complete Address</label>
+                                        <div class="position-relative">
+                                            <input type="text" 
+                                                   class="form-control @error('address') is-invalid @enderror" 
+                                                   id="address" 
+                                                   name="address" 
+                                                   value="{{ old('address') }}" 
+                                                   placeholder="Start typing your address..." 
+                                                   required>
+                                            <i class="fas fa-map-marker-alt position-absolute top-50 end-0 translate-middle-y pe-3 text-muted"></i>
+                                        </div>
+                                        <p class="form-text">Start typing and choose from the suggested options.</p>
+                                        @error('address')
+                                            <span class="invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="city" class="form-label">City</label>
-                                    <input type="text" name="city" id="city" class="form-control" readonly>
+                                    <!-- Hidden Fields for Address Details -->
+                                    <input type="hidden" id="street_number" name="street_number" value="{{ old('street_number') }}">
+                                    <input type="hidden" id="route" name="route" value="{{ old('route') }}">
+                                    <input type="hidden" id="locality" name="locality" value="{{ old('locality') }}">
+                                    <input type="hidden" id="administrative_area_level_1" name="state" value="{{ old('state') }}">
+                                    <input type="hidden" id="postal_code" name="postal_code" value="{{ old('postal_code') }}">
+                                    <input type="hidden" id="country" name="country" value="Pakistan">
+                                    <input type="hidden" id="latitude" name="lat_route" value="{{ old('latitude') }}">
+                                    <input type="hidden" id="longitude" name="lng_route" value="{{ old('longitude') }}">
+                                    <input type="hidden" id="area" name="area" value="{{ old('area') }}">
+
+                                    <!-- Address Preview -->
+                                    <div id="address-preview" class="mt-3" style="display:none;">
+                                        <p><strong>Selected Address:</strong> <span id="selected-address"></span></p>
+                                        <p><strong>City:</strong> <span id="selected-city"></span></p>
+                                        <p><strong>State:</strong> <span id="selected-state"></span></p>
+                                        <p><strong>Postal Code:</strong> <span id="selected-postal-code"></span></p>
+                                        <p><strong>Area:</strong> <span id="selected-area"></span></p>
+                                        <p><strong>Latitude:</strong> <span id="selected-latitude"></span></p>
+                                        <p><strong>Longitude:</strong> <span id="selected-longitude"></span></p>
+                                    </div>
                                 </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="area" class="form-label">Area</label>
-                                    <input type="text" name="area" id="area" class="form-control" readonly>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="sub_area" class="form-label">Sub Area</label>
-                                    <input type="text" id="sub_area" name="sub_area" class="form-control" readonly>
-                                </div>
-
-                                <input type="hidden" id="lat_route">
-                                <input type="hidden" id="lng_route">
-                                <input type="hidden" name="category_id" value="{{ $service->category_id }}">
-                                <input type="hidden" name="subcategory_id" value="{{ $service->id }}">
-                                
                             </div>
                         </div>
 
-                        <!-- Date and Time Section -->
+                        <!-- Date & Time -->
                         <div class="col-md-6">
                             <div class="bg-light p-4 rounded shadow-sm h-100">
                                 <h5 class="text-primary mb-3">Date and Time</h5>
-                                <div class="form-group mb-3">
+                                <div class="mb-3">
                                     <label for="date" class="form-label">Select Date</label>
                                     <input type="date" id="date" name="date" class="form-control" required>
                                 </div>
-                                <div class="form-group">
+                                <div>
                                     <label for="time" class="form-label">Select Time</label>
                                     <input type="time" id="time" name="time" class="form-control" required>
                                 </div>
@@ -70,160 +84,130 @@
                         </div>
 
                         <!-- Payment Method -->
-                        <div class="col-md-12">
-                            <div class="bg-light p-4 rounded shadow-sm">
+                        <div class="col-md-6">
+                            <div class="bg-light p-4 rounded shadow-sm h-100">
                                 <h5 class="text-primary mb-3">Payment Method</h5>
-                                <div class="form-check form-check-inline">
+                                <div class="form-check mb-2">
                                     <input class="form-check-input" type="radio" name="payment_method" id="creditCard" value="online" required>
-                                    <label class="form-check-label" for="creditCard">
-                                        Credit Card
-                                    </label>
+                                    <label class="form-check-label" for="creditCard">Credit Card</label>
                                 </div>
-                                <div class="form-check form-check-inline">
+                                <div class="form-check">
                                     <input class="form-check-input" type="radio" name="payment_method" id="cash" value="cash" required>
-                                    <label class="form-check-label" for="cash">
-                                        Cash on Delivery
-                                    </label>
+                                    <label class="form-check-label" for="cash">Cash on Delivery</label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Service Description -->
+                        <!-- Description -->
                         <div class="col-md-12">
                             <div class="bg-light p-4 rounded shadow-sm">
                                 <h5 class="text-primary mb-3">Service Description</h5>
-                                <textarea name="description" id="description" class="form-control" rows="4" placeholder="Enter any additional details about your service..."></textarea>
+                                <textarea name="description" class="form-control" rows="4" placeholder="Any additional info...">{{ old('description') }}</textarea>
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
+                        <!-- Hidden Service Info -->
+                        <input type="hidden" name="category_id" value="{{ $service->category_id }}">
+                        <input type="hidden" name="subcategory_id" value="{{ $service->id }}">
+
+                        <!-- Submit -->
                         <div class="col-12 text-center mt-4">
-                            <button type="submit" class="btn btn-lg btn-primary px-5 shadow-sm">
-                                Confirm Booking
-                            </button>
+                            <button type="submit" class="btn btn-lg btn-primary px-5 shadow-sm">Confirm Booking</button>
                         </div>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 </div>
-<!-- Booking Page End -->
-@endsection
 
 <script>
-    let autocomplete;
-    let address1Field;
-    let cityField;
-    let areaField;
-    let subAreaField;
-    let lat_route;
-    let lng_route;
-
-    // Initialize the Google Places Autocomplete API
-    function initAutocomplete() {
-    address1Field = document.querySelector("#user_address");
-    cityField = document.querySelector("#city");
-    areaField = document.querySelector("#area");
-    subAreaField = document.querySelector("#sub_area");
-    lat_route = document.querySelector("#lat_route");
-    lng_route = document.querySelector("#lng_route");
-
-    autocomplete = new google.maps.places.Autocomplete(address1Field, {
-        fields: ["address_components", "geometry"],
-        types: ["geocode"],
-    });
-
-    // Listen to place changed event
-    autocomplete.addListener("place_changed", fillInAddress);
-}
-
-// Fill in the form fields when an address is selected
-function fillInAddress() {
-    const place = autocomplete.getPlace();
-
-    if (!place.geometry) {
-        console.log("Place has no geometry");
-        return;
-    }
-
-    // Get latitude and longitude from the selected place
-    let latitude = place.geometry.location.lat();
-    let longitude = place.geometry.location.lng();
-    lat_route.value = latitude;
-    lng_route.value = longitude;
-
-    let address1 = ""; // Full address
-    let city = "";
-    let area = "";
-    let subArea = "";
-
-    // Loop through the address components and fill in the fields
-    for (const component of place.address_components) {
-        const componentType = component.types[0];
-
-        switch (componentType) {
-            case "street_number":
-                address1 = `${component.long_name} ${address1}`; // Prepend street number
-                break;
-            case "route":
-                address1 += component.short_name; // Append street name (route)
-                break;
-            case "locality": // City
-                city = component.long_name;
-                break;
-            case "sublocality_level_1": // Area
-                area = component.long_name;
-                break;
-            case "sublocality_level_2": // Sub Area
-                subArea = component.long_name;
-                break;
-            case "country": // Country (optional)
-                break;
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profile-preview').src = e.target.result;
         }
+        reader.readAsDataURL(input.files[0]);
     }
-
-    // Build the full address string
-    address1 = `${address1.trim()}, ${area.trim()}, ${subArea.trim()}, ${city.trim()}`.trim();
-
-    // Check the final address output in the console for debugging
-    console.log("Full Address: ", address1); // For debugging
-    console.log("City: ", city);
-    console.log("Area: ", area);
-    console.log("SubArea: ", subArea);
-
-    // Ensure the address is properly formatted and stored in address1Field
-    address1Field.value = address1; // Full address in user_address field
-    cityField.value = city;
-    areaField.value = area;
-    subAreaField.value = subArea;
 }
 
-window.initAutocomplete = initAutocomplete;
+// Google Places Autocomplete
+function initAutocomplete() {
+    const addressInput = document.getElementById('address');
+    const options = {
+        componentRestrictions: { country: 'pk' }, // Restrict to Pakistan
+        fields: ['address_components', 'formatted_address', 'geometry', 'name'],
+        types: ['address']
+    };
 
+    const autocomplete = new google.maps.places.Autocomplete(addressInput, options);
+
+    autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (!place.address_components) return;
+
+        // Clear previous values
+        document.getElementById('street_number').value = '';
+        document.getElementById('route').value = '';
+        document.getElementById('locality').value = '';
+        document.getElementById('administrative_area_level_1').value = '';
+        document.getElementById('postal_code').value = '';
+        document.getElementById('latitude').value = '';
+        document.getElementById('longitude').value = '';
+        document.getElementById('area').value = '';
+
+        // Get address components
+        for (const component of place.address_components) {
+            const componentType = component.types[0];
+
+            switch (componentType) {
+                case 'street_number':
+                    document.getElementById('street_number').value = component.long_name;
+                    break;
+                case 'route':
+                    document.getElementById('route').value = component.long_name;
+                    break;
+                case 'locality':
+                    document.getElementById('locality').value = component.long_name;
+                    document.getElementById('selected-city').textContent = component.long_name;
+                    break;
+                case 'administrative_area_level_1':
+                    document.getElementById('administrative_area_level_1').value = component.long_name;
+                    document.getElementById('selected-state').textContent = component.long_name;
+                    break;
+                case 'postal_code':
+                    document.getElementById('postal_code').value = component.long_name;
+                    document.getElementById('selected-postal-code').textContent = component.long_name;
+                    break;
+                case 'sublocality_level_1':
+                    document.getElementById('area').value = component.long_name;
+                    document.getElementById('selected-area').textContent = component.long_name;
+                    break;
+            }
+        }
+
+        // Get coordinates
+        if (place.geometry && place.geometry.location) {
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+            document.getElementById('selected-latitude').textContent = lat.toFixed(6);
+            document.getElementById('selected-longitude').textContent = lng.toFixed(6);
+        }
+
+        // Update preview
+        document.getElementById('selected-address').textContent = place.formatted_address;
+        document.getElementById('address-preview').style.display = 'block';
+    });
+}
 </script>
+@endsection
 
 
 
-<style>
-    .form-control {
-        border-radius: 10px;
-        padding: 15px;
-    }
 
-    .btn-primary {
-        border-radius: 50px;
-        padding: 10px 30px;
-    }
 
-    h5 {
-        margin-bottom: 20px;
-        font-size: 1.25rem;
-        font-weight: bold;
-    }
 
-    textarea {
-        resize: none;
-    }
-</style>
