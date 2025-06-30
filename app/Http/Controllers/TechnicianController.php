@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FareOffer;
 use App\Models\Order;
+use App\Models\OrderRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -14,8 +16,17 @@ class TechnicianController extends Controller
     public function index()
     {
         // Get the count of each type of order
-        $orderRequests = Order::where('status', 'request')->count();
-        $pendingOrders = Order::where('status', 'pending')->count();
+        $orderRequests = OrderRequest::whereHas('order', function ($query) {
+            $query->where('status', 'pending');
+        })->where('technician_id', auth()->id())->count();
+
+        $pendingOrders = FareOffer::with('order')
+            ->where('technician_id', auth()->id())
+            ->where('status', 'accepted')
+            ->whereHas('order', function ($query) {
+                $query->where('status', 'pending');
+            })
+            ->count();
         $completedOrders = Order::where('status', 'completed')->count();
 
         // Return the dashboard view with the order counts
@@ -30,73 +41,67 @@ class TechnicianController extends Controller
 
 
     public function updateEmail(Request $request)
-{
-    // dd($request);
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email|unique:users,email,' . Auth::id(),
-    ]);
+    {
+        // dd($request);
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email,' . Auth::id(),
+        ]);
 
-    if ($validator->fails()) {
-        return redirect()->route('technician.settings')
-            ->withErrors($validator)
-            ->withInput();
+        if ($validator->fails()) {
+            return redirect()->route('technician.settings')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Update the user's email address
+        $user = Auth::user();
+        // dd($user);
+        $user->email = $request->email;
+        $user->save();
+
+        return redirect()->route('technician.settings')->with('sweet_success', 'Email updated successfully!');
     }
 
-    // Update the user's email address
-    $user = Auth::user();
-    // dd($user);
-    $user->email = $request->email;
-    $user->save();
 
-    return redirect()->route('technician.settings')->with('sweet_success', 'Email updated successfully!');
-}
+    public function updatePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'currentPassword' => 'required',
+            'newpassword' => 'required|min:8|confirmed',
+        ]);
 
+        if ($validator->fails()) {
+            return redirect()->route('technician.settings')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-public function updatePassword(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'currentPassword' => 'required',
-        'newpassword' => 'required|min:8|confirmed',
-    ]);
+        $user = Auth::user();
 
-    if ($validator->fails()) {
-        return redirect()->route('technician.settings')
-            ->withErrors($validator)
-            ->withInput();
+        if (!Hash::check($request->currentPassword, $user->password)) {
+            return redirect()->route('technician.settings')
+                ->withErrors(['currentPassword' => 'Current password is incorrect.'])
+                ->withInput();
+        }
+
+        $user->password = Hash::make($request->newpassword); // updated to match form name
+        $user->save();
+
+        return redirect()->route('technician.settings')->with('sweet_success', 'Password updated successfully!');
     }
 
-    $user = Auth::user();
+    public function deleteAccount(Request $request)
+    {
+        // Confirm that the user is logged in
+        $user = Auth::user();
 
-    if (!Hash::check($request->currentPassword, $user->password)) {
-        return redirect()->route('technician.settings')
-            ->withErrors(['currentPassword' => 'Current password is incorrect.'])
-            ->withInput();
+        $user->status = 'inactive';
+        $user->save();
+
+        Auth::logout();
+
+        return redirect('/')->with('sweet_success', 'Your account has been Inactive successfully.');
     }
-
-    $user->password = Hash::make($request->newpassword); // updated to match form name
-    $user->save();
-
-    return redirect()->route('technician.settings')->with('sweet_success', 'Password updated successfully!');
-}
-
-public function deleteAccount(Request $request)
-{
-    // Confirm that the user is logged in
-    $user = Auth::user();
-    
-    // Delete the user's account and all related data
-    // For example, this can include deleting their posts, comments, etc.
-    // You may want to add soft delete for safety if needed.
-    
-    // Deleting user account from the database
-    $user->delete();
-    
-    // Logout the user after deletion
-    Auth::logout();
-
-    // Redirect to the home page with a success message
-    return redirect('/')->with('sweet_success', 'Your account has been deleted successfully.');
-}
 
     /**
      * Show the form for editing the technician's profile.
@@ -105,7 +110,7 @@ public function deleteAccount(Request $request)
     {
         $user = auth()->user();
         $profile = $user->technicianProfile;
-        
+
         return view('technician.pages.edit_profile', compact('profile'));
     }
 
@@ -115,7 +120,7 @@ public function deleteAccount(Request $request)
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
-        
+
         $validated = $request->validate([
             'phone' => 'nullable|string|max:20',
             'occupation' => 'required|string|max:255',
@@ -161,7 +166,7 @@ public function deleteAccount(Request $request)
             TechnicianProfile::create($validated);
         }
 
-        return redirect()->route('technician.profile.edit')
+        return redirect()->route('technician.editprofile')
             ->with('success', 'Profile updated successfully.');
     }
 
@@ -191,10 +196,10 @@ public function deleteAccount(Request $request)
     public function createProfile(Request $request)
     {
         $user = auth()->user();
-        
+
         // Check if profile already exists
         if ($user->technicianProfile) {
-            return redirect()->route('technician.profile.edit')
+            return redirect()->route('technician.editprofile')
                 ->with('error', 'Profile already exists. Please use the update form.');
         }
 
@@ -231,7 +236,7 @@ public function deleteAccount(Request $request)
         $validated['user_id'] = $user->id;
         TechnicianProfile::create($validated);
 
-        return redirect()->route('technician.profile.edit')
+        return redirect()->route('technician.editprofile')
             ->with('success', 'Profile created successfully.');
-}
+    }
 }

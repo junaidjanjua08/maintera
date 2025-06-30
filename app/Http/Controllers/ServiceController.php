@@ -54,98 +54,21 @@ public function ServiceBooking($id)
   
        
         
-        public function OrderBooking(Request $request)
-        {
-            // dd($request);
-            try {
-                $request->validate([
-                    'date' => 'required|date',
-                    'time' => 'required',
-                    'payment_method' => 'required|in:credit_card,cash',
-                    'description' => 'nullable|string',
-                    'lat_route' => 'required',
-                    'lng_route' => 'required',
-                    'address' => 'required|string',
-                    'locality' => 'required|string',
-                    'area' => 'nullable|string',
-                    'sub_area' => 'nullable|string',
-                    'category_id' => 'required',
-                    'subcategory_id' => 'required'
-                ]);
-            } catch (\Illuminate\Validation\ValidationException $e) {
-                dd('Validation Errors:', $e->errors());
-            }
-            
-            // dd('Debug Point 2: After validation');
-        
-            // Combine date and time into a single timestamp
-            $scheduledAt = \Carbon\Carbon::parse($request->date . ' ' . $request->time);
-            $order = new Order();
-            $order->user_id = Auth::id(); // Authenticated customer
-            $order->category_id = $request->category_id;
-            $order->subcategory_id = $request->subcategory_id;
-            $order->street_address = $request->address;
-            $order->city = $request->locality;
-            $order->area = $request->area;
-            $order->sub_area = $request->sub_area;
-            $order->latitude = $request->lat_route;
-            $order->longitude = $request->lng_route;
-            $order->description = $request->description;
-            $order->scheduled_at = $scheduledAt;
-            $order->payment_mode = $request->payment_method;
-            $order->status = 'pending'; // Changed to 'request' to indicate it's waiting for technician offers
-            $order->save();
+ 
 
-            // dd('Debug Point 4: After saving order');
+/**
+ * Helper method to determine file type based on MIME type.
+ */
+private function getFileType(string $mime)
+{
+    if (str_starts_with($mime, 'image/')) {
+        return 'image';
+    } elseif (str_starts_with($mime, 'video/')) {
+        return 'video';
+    }
+    return 'file';
+}
 
-            // Find nearby technicians (within 10km radius)
-            $nearbyTechnicians = \App\Models\User::whereHas('technicianProfile', function($query) {
-                $query->where('is_available', true)
-                      ->where('is_verified', true);
-            })
-            ->where('role', 'technician')
-            ->with('technicianProfile')  // Eager load the relationship
-            ->get();
-        
-
-            if ($nearbyTechnicians->isEmpty()) {
-                \Log::warning('No nearby technicians found');
-                return redirect()->back()->with('error', 'No technicians available in your area at the moment.');
-            }
-
-            $nearbyTechnicians = $nearbyTechnicians->filter(function($technician) use ($request) {
-                // Calculate distance using Haversine formula
-                $distance = $this->calculateDistance(
-                    $request->lat_route,
-                    $request->lng_route,
-                    $technician->technicianProfile->latitude,
-                    $technician->technicianProfile->longitude
-                );
-                return $distance <= 10; // 10km radius
-            });
-
-           
-
-            // Create order request for each nearby technician
-            foreach ($nearbyTechnicians as $technician) {
-                \App\Models\OrderRequest::create([
-                    'order_id' => $order->id,
-                    'technician_id' => $technician->id,
-                    'status' => 'pending',
-                    'distance' => $this->calculateDistance(
-                        $request->lat_route,
-                        $request->lng_route,
-                        $technician->technicianProfile->latitude,
-                        $technician->technicianProfile->longitude
-                    )
-                ]);
-
-                // Send notification to technician
-                $technician->notify(new \App\Notifications\NewOrderRequest($order));
-            }
-        
-            return redirect()->back()->with('sweet_success', 'Booking submitted successfully! Nearby technicians will be notified.');
-        }
     
     /**
      * Calculate distance between two points using Haversine formula

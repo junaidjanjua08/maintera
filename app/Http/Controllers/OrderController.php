@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FareOffer;
 use App\Models\Order;
+use App\Models\OrderRequest;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -13,9 +14,12 @@ class OrderController extends Controller
 
     public function order_requests()
     {
-       $requested_orders = Order::where('status', 'pending')
+       $requested_orders = OrderRequest::with(['order','order.subcategory'])->whereHas('order', function ($query) {
+    $query->where('status', 'pending');
+})->where('technician_id', auth()->id())
     ->orderBy('created_at', 'desc')
     ->get();
+    // dd($requested_orders);
         return view('technician.pages.order-requests', compact('requested_orders'));
     }
 

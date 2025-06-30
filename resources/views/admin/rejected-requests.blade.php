@@ -1,62 +1,115 @@
 @extends('admin.app')
 
 @section('content')
-<div class="container mx-auto px-6 py-10">
-    <!-- Heading Section -->
-    <div class="text-center mb-12">
-        <h2 class="text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
-            ❌ Rejected Technicians
-        </h2>
-        <p class="text-xl text-gray-400 max-w-3xl mx-auto">A list of all technicians whose service requests were rejected. You can review and accept them again if needed.</p>
+<div class="min-h-screen bg-gray-50 px-6 py-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Rejected Technician Requests</h2>
     </div>
 
-    <!-- Table Section -->
-    <div class="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200">
-        <table class="min-w-full table-auto">
-            <thead class="bg-gradient-to-r from-red-600 to-red-500 text-white">
-                <tr>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">ID</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Technician Name</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Email</th>
-                    <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider">Services</th>
-                    <th scope="col" class="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider">Actions</th>
+        <!-- Main Table -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100">
+            <div class="overflow-x-auto w-full">
+                <div class="min-w-[1024px]">
+                    <table class="w-full divide-y divide-gray-200 table-fixed">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                    Technician
+                                </th>
+                                <th scope="col" class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                    Contact Info
+                                </th>
+                                <th scope="col" class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                    Professional Info
+                                </th>
+                                <th scope="col" class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                    Skills & Services
+                                </th>
+                                <th scope="col" class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                    Fields of Work
+                                </th>
+                                <th scope="col" class="w-1/6 px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                    Actions
+                                </th>
                 </tr>
             </thead>
-            <tbody class="bg-white text-sm text-gray-700 divide-y divide-gray-200">
-                @php
-                    $technicians = [
-                        ['id' => 3, 'name' => 'Bilal Khan', 'email' => 'bilal.khan@mail.com', 'services' => ['TV Repair', 'Microwave Fix']],
-                        ['id' => 4, 'name' => 'Nida Ahmed', 'email' => 'nida.ahmed@mail.com', 'services' => ['Plumbing', 'Drain Cleaning']],
-                    ];
-                @endphp
-                @foreach ($technicians as $technician)
-                <tr class="hover:bg-red-50 transition-all duration-300 ease-in-out transform hover:scale-105">
-                    <td class="px-6 py-4 font-semibold text-gray-800">{{ $technician['id'] }}</td>
-                    <td class="px-6 py-4 font-medium text-gray-900">{{ $technician['name'] }}</td>
-                    <td class="px-6 py-4 text-gray-600">{{ $technician['email'] }}</td>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @forelse ($technicians as $technician)
+                            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                <svg class="h-6 w-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ $technician['name'] }}</div>
+                                            <div class="text-sm text-gray-500">{{ $technician['occupation'] }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">{{ $technician['email'] }}</div>
+                                    <div class="text-sm text-gray-500">{{ $technician['phone'] }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">Experience: {{ $technician['experience'] }} years</div>
+                                    <div class="text-sm text-gray-500 truncate">{{ Str::limit($technician['bio'], 50) }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach($technician['skills'] as $skill)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                {{ $skill }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </td>
                     <td class="px-6 py-4">
-                        <ul class="list-disc list-inside space-y-1">
-                            @foreach ($technician['services'] as $service)
-                                <li>{{ $service }}</li>
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach($technician['fields_of_work'] as $field)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                {{ $field }}
+                                            </span>
                             @endforeach
-                        </ul>
+                                    </div>
                     </td>
                     <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                        <a href="{{-- route('admin.technicians.profile', ['id' => $technician['id']]) --}}" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                                    <a href="{{ route('admin.technicians.view', $technician['id']) }}" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
                             👁️ View
                         </a>
-                        <form action="#" method="POST" class="inline">
+                                    <form action="{{ route('admin.technicians.toggle-status', $technician['id']) }}" method="POST" class="inline">
                             @csrf
                             @method('PATCH')
-                            <button type="submit" class="inline-flex items-center bg-green-600 hover:bg-green-700 text-Black text-sm px-4 py-2 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                                        <button type="submit" class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
                              ✅ Accept
                             </button>
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-12">
+                                    <div class="flex flex-col items-center justify-center min-h-[400px]">
+                                        <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                        <h3 class="text-lg font-medium text-gray-900 mb-1">No Rejected Technicians</h3>
+                                        <p class="text-gray-500">There are currently no rejected technician requests.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforelse
             </tbody>
         </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

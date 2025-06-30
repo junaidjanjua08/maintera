@@ -332,6 +332,14 @@
                                                                required>
                                                         <i class="fas fa-map-marker-alt location-icon"></i>
                                                     </div>
+                                                     <div class="text-center mt-2">OR</div>
+                                            <div class="mt-2">
+                                                <button type="button" class="btn btn-outline-primary w-100 w-md-auto"
+                                                    id="useCurrentLocation">
+                                                    <i class="fas fa-location-arrow text-warning"></i> Use Current Location
+                                                </button>
+
+                                            </div>
                                                     <p class="help-text mt-2">Type your address and select from the suggestions</p>
                                                     @error('address')
                                                         <span class="invalid-feedback">{{ $message }}</span>
@@ -464,6 +472,94 @@ function initAutocomplete() {
         document.getElementById('address-preview').style.display = 'block';
     });
 }
+
+
+
+ // for currnt location
+        document.getElementById('useCurrentLocation').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+
+            function successCallback(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                // Set Lat/Lng
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+                document.getElementById('selected-latitude').textContent = lat.toFixed(6);
+                document.getElementById('selected-longitude').textContent = lng.toFixed(6);
+
+                // Geocode the coordinates
+                const geocoder = new google.maps.Geocoder();
+                const latlng = {
+                    lat: lat,
+                    lng: lng
+                };
+
+                geocoder.geocode({
+                    location: latlng
+                }, function(results, status) {
+                    if (status === 'OK' && results[0]) {
+                        const place = results[0];
+                        document.getElementById('address').value = place.formatted_address;
+                        document.getElementById('selected-address').textContent = place.formatted_address;
+                        document.getElementById('address-preview').style.display = 'block';
+
+                        // Reset all fields first
+                        document.getElementById('street_number').value = '';
+                        document.getElementById('route').value = '';
+                        document.getElementById('locality').value = '';
+                        document.getElementById('administrative_area_level_1').value = '';
+                        document.getElementById('postal_code').value = '';
+                        document.getElementById('area').value = '';
+
+                        // Loop through address components
+                        for (const component of place.address_components) {
+                            const type = component.types[0];
+                            switch (type) {
+                                case 'street_number':
+                                    document.getElementById('street_number').value = component.long_name;
+                                    break;
+                                case 'route':
+                                    document.getElementById('route').value = component.long_name;
+                                    break;
+                                case 'locality':
+                                    document.getElementById('locality').value = component.long_name;
+                                    document.getElementById('selected-city').textContent = component
+                                        .long_name;
+                                    break;
+                                case 'administrative_area_level_1':
+                                    document.getElementById('administrative_area_level_1').value = component
+                                        .long_name;
+                                    document.getElementById('selected-state').textContent = component
+                                        .long_name;
+                                    break;
+                                case 'postal_code':
+                                    document.getElementById('postal_code').value = component.long_name;
+                                    document.getElementById('selected-postal-code').textContent = component
+                                        .long_name;
+                                    break;
+                                case 'sublocality_level_1':
+                                    document.getElementById('area').value = component.long_name;
+                                    document.getElementById('selected-area').textContent = component
+                                        .long_name;
+                                    break;
+                            }
+                        }
+                    } else {
+                        alert('Unable to retrieve address. Try again.');
+                    }
+                });
+            }
+
+            function errorCallback(error) {
+                alert('Geolocation error: ' + error.message);
+            }
+        });
 </script>
 
 

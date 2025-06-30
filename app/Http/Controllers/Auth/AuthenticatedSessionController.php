@@ -44,6 +44,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // dd($request->all());
         // Attempt authentication
         $request->authenticate();
     
@@ -54,7 +55,7 @@ class AuthenticatedSessionController extends Controller
         if ($user->role === 'technician' && $user->status === 'inactive') {
             Auth::logout(); // Log the user out
             return redirect()->route('login')->with(
-                'sweet_error', 'Your account is under review. Please wait for approval.'
+                'error', 'Your account is under review. Please wait for approval.'
             );
             
         }

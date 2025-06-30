@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html :class="{ 'theme-dark': dark }" x-data="data()" lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,18 +12,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
     <script src="js/charts-lines.js" defer></script>
     <script src="js/charts-pie.js" defer></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 
-<body>
-    <div class="flex h-screen bg-gray-50 dark:bg-gray-900" :class="{ 'overflow-hidden': isSideMenuOpen }">
-       @include('admin.sidebar')
-        <div class="flex flex-col flex-1 w-full">
-           @include('admin.topbar')
-            <main class="h-full overflow-y-auto">
-             @yield('content')
+<body class="bg-gray-50">
+    <div class="flex h-screen" x-data="{ isSideMenuOpen: false }">
+        @include('admin.sidebar')
+        <div class="flex flex-col flex-1">
+            @include('admin.topbar')
+            <main class="h-full overflow-y-auto bg-gray-50 p-0">
+                @yield('content')
             </main>
         </div>
     </div>
 </body>
-
 </html>

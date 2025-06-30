@@ -95,30 +95,31 @@
         </span>
     </div>
 
-    @foreach ($requested_orders as $order)
+    @foreach ($requested_orders as $orders)
+    {{-- {{ dd($orders->order) }} --}}
         <div class="col-md-12 mb-4">
             <div class="order-card">
                 <div class="order-badge badge-new">New</div>
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div class="me-3">
-                        <div class="order-title">{{ $order->subcategory->name }}</div>
-                        <div class="order-desc">{{ $order->description }}</div>
+                        <div class="order-title">{{ $orders->order->subcategory->name }}</div>
+                        <div class="order-desc">{{ $orders->order->description }}</div>
                     </div>
                     <div class="text-end mt-3 mt-md-0">
-                        <div class="order-location">{{ $order->area . $order->city }}</div>
+                        <div class="order-location">{{ $orders->order->area . $orders->order->city }}</div>
 
                         <form method="POST" action="{{ route('technician.order.view') }}">
                             @csrf
-                            <input type="hidden" name="subcategory_name" value="{{ $order->subcategory->name }}">
-                            <input type="hidden" name="description" value="{{ $order->description }}">
-                            <input type="hidden" name="area" value="{{ $order->area }}">
-                            <input type="hidden" name="order_id" value="{{ $order->id }}">
-                            <input type="hidden" name="city" value="{{ $order->city }}">
-                            <input type="hidden" name="customer_name" value="{{ $order->customer->name }}">
-                            <input type="hidden" name="email" value="{{ $order->customer->email }}">
-                            <input type="hidden" name="phone" value="{{ $order->customer->phone }}">
-                            <input type="hidden" name="address" value="{{ $order->street_address }}">
-                            <input type="hidden" name="status" value="{{ $order->status }}">
+                            <input type="hidden" name="subcategory_name" value="{{ $orders->order->subcategory->name }}">
+                            <input type="hidden" name="description" value="{{ $orders->order->description }}">
+                            <input type="hidden" name="area" value="{{ $orders->order->area }}">
+                            <input type="hidden" name="order_id" value="{{ $orders->order->id }}">
+                            <input type="hidden" name="city" value="{{ $orders->order->city }}">
+                            <input type="hidden" name="customer_name" value="{{ $orders->order->customer->name }}">
+                            <input type="hidden" name="email" value="{{ $orders->order->customer->email }}">
+                            <input type="hidden" name="phone" value="{{ $orders->order->customer->phone }}">
+                            <input type="hidden" name="address" value="{{ $orders->order->street_address }}">
+                            <input type="hidden" name="status" value="{{ $orders->order->status }}">
                             <input type="hidden" name="route" value="{{ route('technician.orders.requests') }}">
 
                             <button type="submit" class="view-btn">View Order</button>

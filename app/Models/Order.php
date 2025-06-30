@@ -24,6 +24,8 @@ class Order extends Model
         'payment_mode',
         'scheduled_at',
         'status',
+        'scheduled_at' => 'datetime',
+    'media' => 'array',
     ];
 
     protected $casts = [

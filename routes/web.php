@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -33,6 +34,11 @@ Route::middleware('auth')->group(function () {
 
 });
 
+
+Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
+Route::post('/payment/easypaisa', [PaymentController::class, 'payWithEasypaisa'])->name('payment.easypaisa');
+Route::match(['get', 'post'], '/payment/easypaisa/callback', [PaymentController::class, 'easypaisaCallback'])->name('payment.easypaisa.callback');
+
 Route::get('/about', function () {
     return view('about');
 })->name('about-us');
@@ -54,9 +60,7 @@ Route::get('/admin-dashboard', function () {
     return view('admin.index');
 })->name('admin-dashboard');
 Route::get('/admin-dashboard', [AdminController::class, 'dashboard'])->name('admin-dashboard');
-Route::get('/cards', function () {
-    return view('admin.accepted-requests');
-})->name('admin.accepted-requests');
+Route::get('/technicians/rejected', [AdminController::class, 'rejectedTechnicians'])->name('admin.rejected-requests');
 Route::get('/forms', function () {
     return view('admin.forms');
 })->name('admin.forms');
@@ -64,20 +68,19 @@ Route::get('/forms', function () {
 Route::get('/admin/inactive-technicians', [AdminController::class, 'inactiveTechnicians'])->name('admin.inactive.technicians');
 Route::get('/admin/accepted-technicians/{id}', [AdminController::class, 'AcceptedTechnicians'])->name('admin.technicians.accept');
 Route::get('/admin/rejected-technicians/{id}', [AdminController::class, 'RejectedTechnicians'])->name('admin.technicians.reject');
+Route::patch('/admin/technicians/{technician}/toggle-status', [AdminController::class, 'toggleTechnicianStatus'])->name('admin.technicians.toggle-status');
+
 Route::get('/services', [AdminController::class, 'index'])->name('admin.services');
 Route::post('/services/category', [AdminController::class, 'storeCategory'])->name('admin.services.storeCategory');
 Route::post('/services', [AdminController::class, 'storeService'])->name('admin.services.store');
 Route::delete('/services/{service}', [AdminController::class, 'destroyService'])->name('admin.services.delete');
+Route::delete('/services/category/{category}', [AdminController::class, 'destroyCategory'])->name('admin.services.deleteCategory');
 Route::get('/charts', function () {
     return view('admin.manage-services');
 })->name('admin.manage-services');
-Route::get('/buttons', function () {
-    return view('admin.rejected-requests');
-})->name('admin.rejected-requests');
-Route::get('/modals', function () {
-    return view('admin.manage-technician');
-})->name('admin.manage-technician');
-Route::get('/tables', function () {
+Route::get('/technicians/accepted', [AdminController::class, 'acceptedTechnicians'])->name('admin.accepted-requests');
+Route::get('/manage/technicians', [AdminController::class, 'manageTechnicians'])->name('admin.manage-technician');
+Route::get('/technician-queries', function () {
     return view('admin.technician-queries');
 })->name('admin.technician-queries');
 Route::get('/customer-queries', function () {
@@ -87,6 +90,7 @@ Route::get('/admin-login', function () {
     return view('admin.pages.login');
 })->name('admin.login');
 
+Route::get('/admin/technicians/{technician}', [AdminController::class, 'viewTechnicianProfile'])->name('admin.technicians.view');
 
 // -----------------------------------------------------------------------------------
 // technician routes
@@ -125,7 +129,7 @@ Route::post('/technician/settings/delete', [TechnicianController::class, 'delete
     Route::get('404', function () {
         return view('technician.pages.404-error');
     })->name('technician.404');
-    Route::get('/tech-404', function () {
+    Route::get('/order/completed', function () {
         return view('technician.pages.completed-orders');
     })->name('technician.orders.completed');
 
@@ -137,7 +141,7 @@ Route::post('/technician/settings/delete', [TechnicianController::class, 'delete
 
 
 
-    Route::get('/technician/profile/edit', [TechnicianController::class, 'editProfile'])->name('technician.profile.edit');
+  
     Route::post('/technician/profile/create', [TechnicianController::class, 'createProfile'])->name('technician.profile.create');
     Route::match(['post', 'put'], '/technician/profile/update', [TechnicianController::class, 'updateProfile'])->name('technician.profile.update');
     Route::post('/technician/profile/availability', [TechnicianController::class, 'updateAvailability'])->name('technician.profile.availability');
@@ -160,6 +164,7 @@ Route::post('/technician/settings/delete', [TechnicianController::class, 'delete
 // Route::get('/tech-register', function () {
 //     return view('technician.pages.sign-up');
 // })->name('tech-register');
+
 
 
 require __DIR__ . '/auth.php';
