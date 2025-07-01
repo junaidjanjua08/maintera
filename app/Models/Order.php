@@ -32,10 +32,12 @@ class Order extends Model
         'scheduled_at' => 'datetime',
     ];
 
-    // Optional: define relationships (if needed)
+    /**
+     * Get the user (customer) who placed the order.
+     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // Order.php

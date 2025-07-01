@@ -38,7 +38,53 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
     @php
     $user = Auth::user();
 @endphp
-
+@if(Auth::user() && Auth::user()->role === 'customer')
+<!-- Notification Bell Icon for Customer -->
+<li class="nav-item dropdown" style="list-style:none;">
+  <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fa fa-bell fa-lg"></i>
+    @php $unread = Auth::user()->unreadNotifications->count(); @endphp
+    @if($unread > 0)
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ $unread }}</span>
+    @endif
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="notificationDropdown" style="min-width: 320px; max-width: 350px;">
+    <li class="dropdown-header bg-light fw-bold py-2 px-3">Notifications</li>
+    <li>
+      <div style="max-height: 350px; overflow-y: auto;">
+        @php
+          // Get all order IDs that have an accepted fare offer
+          $acceptedOrderIds = \App\Models\FareOffer::where('status', 'accepted')->pluck('order_id')->toArray();
+        @endphp
+        @forelse(Auth::user()->notifications->take(20) as $notification)
+          @if($notification->type === 'App\\Notifications\\TechnicianFareOffer')
+            @php
+              $orderId = $notification->data['order_id'] ?? null;
+            @endphp
+            @if($orderId && !in_array($orderId, $acceptedOrderIds))
+              <div class="dropdown-item border-bottom small">
+                <span class="fw-bold">Fare Offer (Pending):</span> {{ $notification->data['message'] ?? '' }}<br>
+                <span>Price: PKR {{ $notification->data['proposed_price'] ?? '' }}</span><br>
+                <a href="{{ route('customer.order.fares', $orderId) }}" class="text-primary">View Offers</a>
+                <div class="text-muted mt-1" style="font-size: 0.8em;">{{ $notification->created_at->diffForHumans() }}</div>
+              </div>
+            @endif
+          @else
+            <div class="dropdown-item border-bottom small">
+              {{ $notification->data['message'] ?? 'Notification' }}
+              <div class="text-muted mt-1" style="font-size: 0.8em;">{{ $notification->created_at->diffForHumans() }}</div>
+            </div>
+          @endif
+        @empty
+          <div class="dropdown-item text-muted">No notifications</div>
+        @endforelse
+      </div>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li class="text-center py-2"><a href="{{ route('customer.order.fares', Auth::user()->order->last()->id ?? 0) }}" class="text-primary">View All</a></li>
+  </ul>
+</li>
+@endif
 @if(!Auth::check() || (Auth::check() && $user->role !== 'customer'))
     <a href="{{ Auth::check() && $user->role === 'technician' ? route('technician.dashboard') : route('login', ['role' => 'technician']) }}" class="nav-item nav-link">
         Technician
@@ -61,6 +107,8 @@ class="navbar navbar-expand-lg bg-white navbar-light sticky-top px-4 px-lg-5 py-
   </li>
   
       @endif
+
+
 
 
 

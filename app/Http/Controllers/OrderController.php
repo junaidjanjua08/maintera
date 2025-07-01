@@ -17,6 +17,7 @@ class OrderController extends Controller
        $requested_orders = OrderRequest::with(['order','order.subcategory'])->whereHas('order', function ($query) {
     $query->where('status', 'pending');
 })->where('technician_id', auth()->id())
+->where('fare_offer',null)
     ->orderBy('created_at', 'desc')
     ->get();
     // dd($requested_orders);
@@ -102,8 +103,24 @@ class OrderController extends Controller
         'technician_id' => $request->technician_id,
         'proposed_price' => $request->proposed_price,
         'note' => $request->note,
-        'status' => 'accepted',
+        'status' => 'Pending',
     ]);
+
+    $order_req = OrderRequest::where('order_id',$request->order_id)->get();
+    $order_req->fare_offer = 1;
+  
+    
+    // Notify the customer about the new fare offer
+    $order = \App\Models\Order::find($request->order_id);
+    $customer = $order ? $order->user : null;
+    if ($customer) {
+        $fareOffer = \App\Models\FareOffer::where('order_id', $order->id)
+            ->where('technician_id', $request->technician_id)
+            ->latest()->first();
+        if ($fareOffer) {
+            $customer->notify(new \App\Notifications\TechnicianFareOffer($fareOffer));
+        }
+    }
 
     return redirect()->route('technician.orders.requests')->with('sweet_success', 'Fare offer submitted successfully!');
 }
@@ -122,5 +139,41 @@ public function updateStatus(Request $request)
 
     return response()->json(['message' => 'Status updated successfully']);
 }
+
+    // Customer: View all fare offers for an order
+    public function viewOrderFares($orderId)
+    {
+        // dd($orderId);
+        $order = \App\Models\Order::with('user')->findOrFail($orderId);
+        $fareOffers = \App\Models\FareOffer::with('technician.technicianProfile')->where('order_id', $orderId)->get();
+        return view('customer.order-fares', compact('order', 'fareOffers'));
+    }
+
+    // Customer: View technician profile
+    public function viewTechnicianProfile($technicianId)
+    {
+        $technician = \App\Models\User::with('technicianProfile')->findOrFail($technicianId);
+        return view('customer.technician-profile', compact('technician'));
+    }
+
+    // Customer: Accept a fare offer (assign order to technician)
+    public function acceptFareOffer($orderId, $fareOfferId)
+    {
+        $order = \App\Models\Order::findOrFail($orderId);
+        $fareOffer = \App\Models\FareOffer::findOrFail($fareOfferId);
+        // Assign order to technician and update status
+        $order->technician_id = $fareOffer->technician_id;
+        $order->status = 'accepted';
+        $order->save();
+        // Delete all other fare offers for this order except the accepted one
+        $deleted = \App\Models\FareOffer::where('order_id', $orderId)
+            ->where('id', '!=', $fareOfferId)
+            ->delete();
+        dd($deleted); // This should show the number of deleted rows
+        // Optionally notify the technician
+        $technician = $fareOffer->technician;
+        // $technician->notify(new \App\Notifications\OrderAccepted($order));
+        return redirect()->route('customer.order.fares', $orderId)->with('sweet_success', 'You have accepted the fare offer. The order is now assigned to the technician.');
+    }
 
 }

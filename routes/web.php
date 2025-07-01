@@ -168,3 +168,12 @@ Route::post('/technician/settings/delete', [TechnicianController::class, 'delete
 
 
 require __DIR__ . '/auth.php';
+
+// Customer: View all fare offers for an order
+Route::get('/customer/orders/{order}/fares', [OrderController::class, 'viewOrderFares'])->name('customer.order.fares');
+
+// Customer: View technician profile
+Route::get('/technician/profile/{technician}', [OrderController::class, 'viewTechnicianProfile'])->name('technician.profile.view');
+
+// Customer: Accept a fare offer (assign order to technician)
+Route::post('/customer/orders/{order}/fares/{fareOffer}/accept', [OrderController::class, 'acceptFareOffer'])->name('customer.fare.accept');
