@@ -96,7 +96,7 @@
             <div class="order-card">
                 <div class="order-badge">Completed</div>
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div class="me-3">
+                    <div class="me-3">  
                         <div class="order-title">{{ $order->order->subcategory->name ?? 'Service' }}</div>
                         <div class="order-desc">{{ $order->order->description ?? 'No description available' }}</div>
                     </div>

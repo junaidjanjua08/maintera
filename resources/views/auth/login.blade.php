@@ -399,9 +399,9 @@
     <!-- Login Form -->
     <div class="form-container animate__animated animate__fadeInUp">
         <!-- Logo -->
-        <div class="logo-container">
+        {{-- <div class="logo-container">
             <img src="{{ asset('path_to_logo/logo.png') }}" alt="Maintera Logo" class="logo">
-        </div>
+        </div> --}}
 
         <h2>Welcome Back</h2>
         

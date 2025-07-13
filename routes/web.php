@@ -256,4 +256,9 @@ Route::get('/test-mark-all-read', function() {
     ]);
 })->middleware('auth');
 
+// Admin Orders Management
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/orders', [App\Http\Controllers\AdminController::class, 'orders'])->name('admin.orders.index');
+});
+
 

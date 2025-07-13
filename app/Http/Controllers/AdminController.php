@@ -8,6 +8,7 @@ use App\Models\TechnicianProfile;
 use App\Models\User;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use App\Models\Order;
 
 class AdminController extends Controller
 {
@@ -238,5 +239,47 @@ class AdminController extends Controller
         $supportRequests = $query->orderBy('created_at', 'desc')->paginate(15);
 
         return view('admin.support-requests', compact('supportRequests'));
+    }
+
+    public function orders(Request $request)
+    {
+        $query = Order::with(['customer', 'technician', 'fareOffers', 'review']);
+
+        // Filtering
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+        if ($request->has('technician_id') && $request->technician_id) {
+            $query->where('technician_id', $request->technician_id);
+        }
+        if ($request->has('customer_id') && $request->customer_id) {
+            $query->where('user_id', $request->customer_id);
+        }
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('id', $search)
+                  ->orWhere('description', 'like', "%$search%")
+                  ->orWhereHas('customer', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%$search%")
+                         ->orWhere('email', 'like', "%$search%")
+                         ->orWhere('phone', 'like', "%$search%")
+                         ;
+                  })
+                  ->orWhereHas('technician', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%$search%")
+                         ->orWhere('email', 'like', "%$search%")
+                         ->orWhere('phone', 'like', "%$search%")
+                         ;
+                  });
+            });
+        }
+
+        $orders = $query->latest()->paginate(20);
+        $statuses = ['all', 'pending', 'accepted', 'in_progress', 'completed', 'cancelled'];
+        $technicians = \App\Models\User::where('role', 'technician')->get();
+        $customers = \App\Models\User::where('role', 'customer')->get();
+
+        return view('admin.orders.index', compact('orders', 'statuses', 'technicians', 'customers'));
     }
 }

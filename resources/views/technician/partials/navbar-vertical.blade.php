@@ -3,7 +3,7 @@
     <div class="nav-scroller">
         <!-- Brand logo -->
         <a class="navbar-brand d-flex align-items-center px-4 py-3" href="@@webRoot/index.html">
-            <img src="@@webRoot/assets/images/brand/logo/logo.svg" alt="" class="me-2" height="24" />
+           
             <span class="fw-bold text-dark">Technician Panel</span>
         </a>
 
