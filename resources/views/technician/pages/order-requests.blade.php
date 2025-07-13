@@ -91,9 +91,20 @@
     <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="fw-bold" style="font-size: 1.8rem; color: #1f2937;">📦 Order Requests</h2>
         <span class="badge bg-success text-white px-3 py-2" style="border-radius: 12px; font-size: 0.9rem;">
-            {{ count($requested_orders) }}
+            {{ count($requested_orders) }} Orders
         </span>
     </div>
+
+    @if(count($requested_orders) == 0)
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fe fe-info fs-3 mb-2"></i>
+                <h5>No Order Requests</h5>
+                <p class="mb-0">You don't have any pending order requests at the moment.</p>
+                <small class="text-muted">Orders will appear here when customers place orders within your 30km range and match your skills.</small>
+            </div>
+        </div>
+    @endif
 
     @foreach ($requested_orders as $orders)
     {{-- {{ dd($orders->order) }} --}}
@@ -104,6 +115,11 @@
                     <div class="me-3">
                         <div class="order-title">{{ $orders->order->subcategory->name }}</div>
                         <div class="order-desc">{{ $orders->order->description }}</div>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fe fe-map-pin"></i> Distance: {{ number_format($orders->distance, 1) }}km
+                            </small>
+                        </div>
                     </div>
                     <div class="text-end mt-3 mt-md-0">
                         <div class="order-location">{{ $orders->order->area . $orders->order->city }}</div>

@@ -44,7 +44,8 @@ class TechnicianProfile extends Model
         'verified_at' => 'datetime',
         'latitude' => 'decimal:6',
         'longitude' => 'decimal:6',
-        'rating' => 'decimal:2'
+        'rating' => 'decimal:2',
+        'occupation' => 'array',
     ];
 
     /**

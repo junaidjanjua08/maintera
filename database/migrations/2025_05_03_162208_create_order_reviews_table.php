@@ -18,7 +18,14 @@ return new class extends Migration
             $table->foreignId('technician_id')->constrained('users')->onDelete('cascade');
             $table->tinyInteger('rating'); // 1 to 5
             $table->text('review')->nullable();
+            $table->tinyInteger('service_quality')->nullable(); // 1 to 5
+            $table->tinyInteger('communication')->nullable(); // 1 to 5
+            $table->tinyInteger('punctuality')->nullable(); // 1 to 5
+            $table->tinyInteger('professionalism')->nullable(); // 1 to 5
             $table->timestamps();
+            
+            // Ensure one review per order
+            $table->unique('order_id');
         });
         
     }

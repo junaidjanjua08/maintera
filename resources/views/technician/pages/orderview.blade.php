@@ -178,25 +178,7 @@
             <div class="info-value">{{ $subcategory_name ?? 'N/A' }}</div>
         </div>
 
-        <div>
-            <div class="info-label">Order Status</div>
-            <div class="info-value">
-                <form id="statusUpdateForm">
-                    @csrf
-                    <input type="hidden" name="order_id" value="{{ $order_id }}">
-        
-                    <select name="status" id="statusSelect" class="form-select form-select-sm w-auto d-inline-block">
-                        @foreach(['pending', 'offer_received', 'accepted', 'in_progress', 'completed', 'cancelled'] as $option)
-                            <option value="{{ $option }}" {{ $status === $option ? 'selected' : '' }}>
-                                {{ ucfirst(str_replace('_', ' ', $option)) }}
-                            </option>
-                        @endforeach
-                    </select>
-        
-                    <span id="statusUpdateMsg" class="text-success ms-2" style="display: none;">✔ Updated</span>
-                </form>
-            </div>
-        </div>
+       
         
         <div>
             <div class="info-label">Description</div>
@@ -249,11 +231,38 @@
             </div>
         </div>
 
-        <!-- Offer Fare Button -->
-        <div style="margin-top: 1.5rem;">
-            <button class="back-btn" style="background-color: #28a745;" data-bs-toggle="modal" data-bs-target="#offerFareModal">
-                💰 Offer Fare
-            </button>
+                <!-- Action Buttons -->
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            @if($status !== 'completed' && $status !== 'cancelled')
+                @if(!$isAssignedToTechnician)
+                    <button class="back-btn" style="background-color: #28a745;" data-bs-toggle="modal" data-bs-target="#offerFareModal">
+                        💰 Offer Fare
+                    </button>
+                @else
+                    <button class="back-btn" style="background-color: #007bff;" onclick="markAsCompleted()">
+                        ✅ Mark as Completed
+                    </button>
+                    
+                    @if($status === 'pending')
+                        <button class="back-btn" style="background-color: #dc3545;" onclick="cancelOrder()">
+                            ❌ Cancel Order
+                        </button>
+                    @endif
+                @endif
+            @elseif($status === 'completed')
+                <div class="alert alert-success" style="width: 100%;">
+                    <i class="fas fa-check-circle"></i> This order has been marked as completed.
+                </div>
+            @elseif($status === 'cancelled')
+                <div class="alert alert-danger" style="width: 100%;">
+                    <i class="fas fa-times-circle"></i> This order has been cancelled.
+                    @if(isset($order) && $order->cancellation_reason)
+                        <hr>
+                        <strong>Cancellation Reason:</strong><br>
+                        {{ $order->cancellation_reason }}
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 </div>
@@ -293,7 +302,57 @@
     </div>
   </div>
   
-
+  <!-- Cancel Order Modal -->
+  <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title" id="cancelOrderModalLabel">
+                      <i class="fas fa-exclamation-triangle"></i> Cancel Order
+                  </h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="alert alert-warning">
+                      <i class="fas fa-info-circle"></i>
+                      <strong>Important:</strong> Please provide a clear reason for cancelling this order. This information will be shared with the customer.
+                  </div>
+                  <form id="cancelOrderForm">
+                      <input type="hidden" id="cancelOrderId" name="order_id" value="{{ $order_id }}">
+                      <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                      
+                      <div class="mb-3">
+                          <label for="cancellation_reason" class="form-label fw-semibold">
+                              <i class="fas fa-comment"></i> Cancellation Reason *
+                          </label>
+                          <textarea 
+                              class="form-control" 
+                              id="cancellation_reason" 
+                              name="cancellation_reason" 
+                              rows="4" 
+                              required 
+                              minlength="10" 
+                              maxlength="500"
+                              placeholder="Please provide a detailed reason for cancelling this order (minimum 10 characters)..."></textarea>
+                          <div class="form-text">
+                              <small class="text-muted">
+                                  <span id="charCount">0</span>/500 characters
+                              </small>
+                          </div>
+                      </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                      <i class="fas fa-times"></i> Close
+                  </button>
+                  <button type="button" class="btn btn-danger" onclick="submitCancellation()">
+                      <i class="fas fa-check"></i> Confirm Cancellation
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
 
 @endsection
 
@@ -310,10 +369,178 @@
                 success: function (response) {
                     $('#statusUpdateMsg').fadeIn().delay(1500).fadeOut();
                 },
-                error: function () {
-                    alert('Failed to update status.');
+                error: function (xhr) {
+                    if (xhr.status === 403) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Unauthorized',
+                            text: 'You are not authorized to update this order status. This order is not assigned to you.'
+                        });
+                        // Reset the select to the original value
+                        $(this).val('{{ $status }}');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to update status.'
+                        });
+                        // Reset the select to the original value
+                        $(this).val('{{ $status }}');
+                    }
                 }
             });
+        });
+    });
+
+    function markAsCompleted() {
+        Swal.fire({
+            title: 'Mark as Completed?',
+            text: 'Are you sure you want to mark this order as completed?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, mark as completed!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let formData = new FormData();
+                formData.append('order_id', '{{ $order_id }}');
+                formData.append('status', 'completed');
+                formData.append('_token', '{{ csrf_token() }}');
+        
+                $.ajax({
+                    url: "{{ route('technician.orders.updateStatus') }}",
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Completed!',
+                            text: 'Order marked as completed successfully!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 403) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Unauthorized',
+                                text: 'You are not authorized to update this order status. This order is not assigned to you.'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to update status.'
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function cancelOrder() {
+        $('#cancellation_reason').val('');
+        $('#charCount').text('0');
+        $('#cancelOrderModal').modal('show');
+    }
+
+    function submitCancellation() {
+        const reason = $('#cancellation_reason').val().trim();
+        
+        if (reason.length < 10) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Reason',
+                text: 'Please provide a cancellation reason with at least 10 characters.'
+            });
+            return;
+        }
+        
+        Swal.fire({
+            title: 'Cancel Order?',
+            text: 'Are you sure you want to cancel this order? This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let formData = new FormData();
+                formData.append('order_id', '{{ $order_id }}');
+                formData.append('cancellation_reason', reason);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                $.ajax({
+                    url: "{{ route('technician.orders.cancel') }}",
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        $('#cancelOrderModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cancelled!',
+                            text: 'Order cancelled successfully!',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 403) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Unauthorized',
+                                text: 'You are not authorized to cancel this order.'
+                            });
+                        } else if (xhr.status === 400) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Invalid Action',
+                                text: 'Only pending orders can be cancelled.'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to cancel order. Please try again.'
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    // Character counter for cancellation reason
+    $(document).ready(function() {
+        $('#cancellation_reason').on('input', function() {
+            const length = $(this).val().length;
+            $('#charCount').text(length);
+            
+            if (length > 450) {
+                $('#charCount').addClass('text-warning');
+            } else {
+                $('#charCount').removeClass('text-warning');
+            }
+            
+            if (length > 480) {
+                $('#charCount').removeClass('text-warning').addClass('text-danger');
+            } else if (length <= 450) {
+                $('#charCount').removeClass('text-danger');
+            }
         });
     });
     </script>

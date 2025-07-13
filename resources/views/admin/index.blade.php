@@ -87,5 +87,22 @@
         </div>
     </a>
 
+    <!-- Support Requests -->
+    <a href="{{ route('admin.support-requests.index') }}" class="block p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer">
+        <div class="flex items-center gap-4">
+            <div class="bg-indigo-100 text-indigo-600 p-3 rounded-full">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-gray-600 text-sm font-semibold">Support Requests</h2>
+                <p class="text-2xl font-bold text-indigo-600">{{ $supportRequests ?? '0' }}</p>
+            </div>
+        </div>
+    </a>
+
 </div>
 @endsection

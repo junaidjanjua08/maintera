@@ -15,6 +15,9 @@ class TechnicianController extends Controller
 {
     public function index()
     {
+        // Clear the order view source session when navigating to dashboard
+        session()->forget('order_view_source');
+        
         // Get the count of each type of order
         $orderRequests = OrderRequest::whereHas('order', function ($query) {
             $query->where('status', 'pending');
@@ -95,12 +98,20 @@ class TechnicianController extends Controller
         // Confirm that the user is logged in
         $user = Auth::user();
 
+        // Set user status to inactive
         $user->status = 'inactive';
         $user->save();
 
+        // Also update technician profile availability if exists
+        if ($user->technicianProfile) {
+            $user->technicianProfile->update([
+                'is_available' => false
+            ]);
+        }
+
         Auth::logout();
 
-        return redirect('/')->with('sweet_success', 'Your account has been Inactive successfully.');
+        return redirect('/')->with('sweet_success', 'Your account has been deactivated successfully. You can contact support to reactivate your account if needed.');
     }
 
     /**
@@ -109,9 +120,16 @@ class TechnicianController extends Controller
     public function editProfile()
     {
         $user = auth()->user();
-        $profile = $user->technicianProfile;
+        
+        // Try to get the profile directly from the database
+        $profile = \App\Models\TechnicianProfile::where('user_id', $user->id)->first();
+        
+        // If no profile exists, create an empty one for the form
+        if (!$profile) {
+            $profile = new \App\Models\TechnicianProfile();
+        }
 
-        return view('technician.pages.edit_profile', compact('profile'));
+        return view('technician.pages.edit_profile', compact('user', 'profile'));
     }
 
     /**
@@ -122,8 +140,11 @@ class TechnicianController extends Controller
         $user = auth()->user();
 
         $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'occupation' => 'required|string|max:255',
+            'occupation' => 'required|array',
+            'occupation.*' => 'string|max:255',
             'experience' => 'required|string|max:50',
             'qualification' => 'required|string|max:255',
             'address' => 'required|string',
@@ -142,6 +163,11 @@ class TechnicianController extends Controller
             'skills.*' => 'string|max:255',
         ]);
 
+        // Update user information
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->save();
+
         // Handle profile image upload
         if ($request->hasFile('profile_image')) {
             // Delete old profile image if exists
@@ -157,6 +183,12 @@ class TechnicianController extends Controller
             $image->move(public_path('uploads/technician-profiles'), $imageName);
             $validated['profile_image'] = 'uploads/technician-profiles/' . $imageName;
         }
+
+        // Remove user fields from profile data
+        unset($validated['name'], $validated['email']);
+
+        // Store occupation as array (JSON)
+        $validated['occupation'] = array_values($validated['occupation']);
 
         // Update or create profile
         if ($user->technicianProfile) {
@@ -195,6 +227,7 @@ class TechnicianController extends Controller
      */
     public function createProfile(Request $request)
     {
+        
         $user = auth()->user();
 
         // Check if profile already exists
@@ -205,7 +238,8 @@ class TechnicianController extends Controller
 
         $validated = $request->validate([
             'phone' => 'nullable|string|max:20',
-            'occupation' => 'required|string|max:255',
+            'occupation' => 'required|array',
+            'occupation.*' => 'string|max:255',
             'experience' => 'required|string|max:50',
             'qualification' => 'required|string|max:255',
             'address' => 'required|string',
@@ -234,9 +268,58 @@ class TechnicianController extends Controller
 
         // Create new profile
         $validated['user_id'] = $user->id;
+        // Store occupation as array (JSON)
+        $validated['occupation'] = array_values($validated['occupation']);
         TechnicianProfile::create($validated);
 
         return redirect()->route('technician.editprofile')
             ->with('success', 'Profile created successfully.');
     }
+
+
+
+    public function Offer_Fair(Request $request)
+    {
+        // dd($request);
+        $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'technician_id' => 'required|exists:users,id',
+            'proposed_price' => 'required|numeric|min:0',
+            'note' => 'nullable|string',
+        ]);
+    
+        FareOffer::create([
+            'order_id' => $request->order_id,
+            'technician_id' => $request->technician_id,
+            'proposed_price' => $request->proposed_price,
+            'note' => $request->note,
+            'status' => 'Pending',
+        ]);
+    
+        $order_req = OrderRequest::where('technician_id', Auth()->id())
+            ->where('order_id', $request->order_id)
+            ->first();
+
+        if ($order_req) {
+            $order_req->fare_offer = 1.0;
+            $order_req->save();
+        }
+      
+        
+        // Notify the customer about the new fare offer
+        $order = \App\Models\Order::find($request->order_id);
+        $customer = $order ? $order->user : null;
+        if ($customer) {
+            $fareOffer = \App\Models\FareOffer::where('order_id', $order->id)
+                ->where('technician_id', $request->technician_id)
+                ->latest()->first();
+            if ($fareOffer) {
+                $customer->notify(new \App\Notifications\TechnicianFareOffer($fareOffer));
+            }
+        }
+    
+        return redirect()->route('technician.orders.requests')->with('sweet_success', 'Fare offer submitted successfully!');
+    }
+
+
 }

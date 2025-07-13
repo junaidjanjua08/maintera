@@ -322,7 +322,11 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
             } else {
-                alert('Geolocation is not supported by this browser.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Geolocation Not Supported',
+                    text: 'Geolocation is not supported by this browser.'
+                });
             }
 
             function successCallback(position) {
@@ -393,13 +397,21 @@
                             }
                         }
                     } else {
-                        alert('Unable to retrieve address. Try again.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Address Error',
+                            text: 'Unable to retrieve address. Try again.'
+                        });
                     }
                 });
             }
 
             function errorCallback(error) {
-                alert('Geolocation error: ' + error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Geolocation Error',
+                    text: 'Geolocation error: ' + error.message
+                });
             }
         });
     </script>

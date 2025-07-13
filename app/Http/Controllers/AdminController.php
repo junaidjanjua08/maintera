@@ -6,18 +6,24 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\TechnicianProfile;
 use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'IsAdmin']);
+    }
 
     public function dashboard(){
         $customers = User::where('role','customer')->count();
         $technicians = User::where('role','technician')->count();
         $tech_requests = User::where('role','technician')->where('status','inactive')->count();
+        $supportRequests = \App\Models\SupportRequest::count();
         
 
-        return view('admin.index',compact('customers','technicians','tech_requests'));
+        return view('admin.index',compact('customers','technicians','tech_requests','supportRequests'));
     }
 
 
@@ -97,6 +103,23 @@ class AdminController extends Controller
     {
         $technicianProfile = $technician->technicianProfile;
         return view('admin.technician-profile', compact('technicianProfile'));
+    }
+
+    public function deleteTechnician(User $technician)
+    {
+        try {
+            // Delete the technician profile if it exists
+            if ($technician->technicianProfile) {
+                $technician->technicianProfile->delete();
+            }
+            
+            // Delete the user account
+            $technician->delete();
+            
+            return back()->with('success', 'Technician deleted successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to delete technician. Please try again.');
+        }
     }
 
     public function acceptedTechnicians()
@@ -180,5 +203,40 @@ class AdminController extends Controller
             });
 
         return view('admin.manage-technician', compact('technicians'));
+    }
+
+    public function supportRequests(Request $request)
+    {
+        $query = \App\Models\SupportRequest::with(['user', 'assignedAdmin']);
+
+        // Search functionality
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                  ->orWhere('email', 'like', "%{$searchTerm}%")
+                  ->orWhere('subject', 'like', "%{$searchTerm}%")
+                  ->orWhere('message', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Filter by status
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by priority
+        if ($request->has('priority') && $request->priority !== 'all') {
+            $query->where('priority', $request->priority);
+        }
+
+        // Filter by user type
+        if ($request->has('user_type') && $request->user_type !== 'all') {
+            $query->where('user_type', $request->user_type);
+        }
+
+        $supportRequests = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        return view('admin.support-requests', compact('supportRequests'));
     }
 }

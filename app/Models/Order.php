@@ -24,6 +24,8 @@ class Order extends Model
         'payment_mode',
         'scheduled_at',
         'status',
+        'cancellation_reason',
+        'technician_id',
         'scheduled_at' => 'datetime',
     'media' => 'array',
     ];
@@ -76,6 +78,19 @@ public function payment()
 public function review()
 {
     return $this->hasOne(OrderReview::class);
+}
+
+public function chatMessages()
+{
+    return $this->hasMany(ChatMessage::class)->orderBy('created_at', 'asc');
+}
+
+public function unreadMessages($userId)
+{
+    return $this->chatMessages()
+        ->where('sender_id', '!=', $userId)
+        ->whereNull('read_at')
+        ->count();
 }
 
    

@@ -13,6 +13,7 @@ class FareOffer extends Model
         'order_id',
         'technician_id',
         'proposed_price',
+        'fare_offer',
         'note',
         'status',
     ];

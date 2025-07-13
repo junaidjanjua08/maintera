@@ -7,6 +7,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content="" name="keywords" />
     <meta content="" name="description" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon" />
@@ -50,11 +51,15 @@
     <!-- Footer Start -->
     @include('footer')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/sweet-alert-utils.js') }}"></script>
 
 <!-- SweetAlert session handler -->
 <x-alerts.sweet-alert />
     <x-toast-messages />
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAP_KEY') }}&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
+    
+    <!-- Support Button -->
+    <x-support-button />
 </body>
 
 </html>

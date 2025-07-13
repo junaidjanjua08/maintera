@@ -78,88 +78,54 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0" style="font-size: 1.8rem; color: #1f2937;">✅ Completed Orders</h2>
         <span class="badge bg-success text-white px-3 py-2" style="border-radius: 12px; font-size: 0.9rem;">
-            5 Orders Completed {{ Auth::user()->name }}
+            {{ $completed_orders ? count($completed_orders) : 0 }} Orders Completed
         </span>
     </div>
-
-    <div class="col-md-12 mb-4">
-        <div class="order-card">
-            <div class="order-badge">Completed</div>
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="me-3">
-                    <div class="order-title">Microwave Repair</div>
-                    <div class="order-desc">Fixed heating issue and replaced internal fuse.</div>
-                </div>
-                <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">F-10 Islamabad</div>
-                    <button class="view-btn">View Details</button>
+    @if(!$completed_orders || count($completed_orders) == 0)
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <i class="fe fe-info fs-3 mb-2"></i>
+            <h5>No Completed Orders</h5>
+            <p class="mb-0">You don't have any completed orders at the moment.</p>
+            <small class="text-muted">Completed orders will appear here once you finish your assigned tasks.</small>
+        </div>
+    </div>
+    @else
+        @foreach ($completed_orders as $order)
+        <div class="col-md-12 mb-4">
+            <div class="order-card">
+                <div class="order-badge">Completed</div>
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div class="me-3">
+                        <div class="order-title">{{ $order->order->subcategory->name ?? 'Service' }}</div>
+                        <div class="order-desc">{{ $order->order->description ?? 'No description available' }}</div>
+                    </div>
+                    <div class="text-end mt-3 mt-md-0">
+                        <div class="order-location">{{ $order->order->area ?? '' }} {{ $order->order->city ?? '' }}</div>
+                        
+                        <form method="POST" action="{{ route('technician.order.view') }}">
+                            @csrf
+                            <input type="hidden" name="subcategory_name" value="{{ $order->order->subcategory->name ?? '' }}">
+                            <input type="hidden" name="description" value="{{ $order->order->description ?? '' }}">
+                            <input type="hidden" name="area" value="{{ $order->order->area ?? '' }}">
+                            <input type="hidden" name="order_id" value="{{ $order->order->id }}">
+                            <input type="hidden" name="city" value="{{ $order->order->city ?? '' }}">
+                            <input type="hidden" name="customer_name" value="{{ $order->order->customer->name ?? '' }}">
+                            <input type="hidden" name="email" value="{{ $order->order->customer->email ?? '' }}">
+                            <input type="hidden" name="phone" value="{{ $order->order->customer->phone ?? '' }}">
+                            <input type="hidden" name="address" value="{{ $order->order->street_address ?? '' }}">
+                            <input type="hidden" name="status" value="{{ $order->order->status }}">
+                            <input type="hidden" name="route" value="{{ route('technician.orders.completed') }}">
+                            
+                            <button type="submit" class="view-btn">View Details</button>
+                        </form>
+                        
+                       
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 mb-4">
-        <div class="order-card">
-            <div class="order-badge">Completed</div>
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="me-3">
-                    <div class="order-title">CCTV Installation</div>
-                    <div class="order-desc">Installed 4 cameras and configured mobile view.</div>
-                </div>
-                <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">Gulberg Green</div>
-                    <button class="view-btn">View Details</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12 mb-4">
-        <div class="order-card">
-            <div class="order-badge">Completed</div>
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="me-3">
-                    <div class="order-title">Fridge Gas Refill</div>
-                    <div class="order-desc">Recharged gas to restore proper cooling.</div>
-                </div>
-                <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">G-11 Markaz</div>
-                    <button class="view-btn">View Details</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12 mb-4">
-        <div class="order-card">
-            <div class="order-badge">Completed</div>
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="me-3">
-                    <div class="order-title">Inverter AC Service</div>
-                    <div class="order-desc">Complete cleaning and performance testing.</div>
-                </div>
-                <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">PWD Colony</div>
-                    <button class="view-btn">View Details</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12 mb-4">
-        <div class="order-card">
-            <div class="order-badge">Completed</div>
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div class="me-3">
-                    <div class="order-title">Geyser Replacement</div>
-                    <div class="order-desc">Old geyser removed and new one installed.</div>
-                </div>
-                <div class="text-end mt-3 mt-md-0">
-                    <div class="order-location">I-10 Islamabad</div>
-                    <button class="view-btn">View Details</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        @endforeach
+    @endif
 </div>
 @endsection

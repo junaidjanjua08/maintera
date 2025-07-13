@@ -26,5 +26,8 @@
                 {{ $slot }}
             </div>
         </div>
+        
+        <!-- Support Button -->
+        <x-support-button />
     </body>
 </html>

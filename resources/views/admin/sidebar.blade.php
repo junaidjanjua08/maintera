@@ -5,10 +5,12 @@
             Admin Dashboard
         </a>
         <ul class="mt-6">
-            <li class="relative px-6 py-3">
-                <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
-                    aria-hidden="true"></span>
-                <a class="inline-flex items-center w-full text-sm font-semibold text-gray-800 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 dark:text-gray-100"
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin-dashboard') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin-dashboard'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin-dashboard') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
                     href="{{ route('admin-dashboard') }}">
                     <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -21,8 +23,12 @@
             </li>
         </ul>
         <ul>
-            <li class="relative px-6 py-3">
-                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin.inactive.technicians') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.inactive.technicians'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.inactive.technicians') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
                     href="{{ route('admin.inactive.technicians') }}">
                     <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -33,8 +39,12 @@
                     <span class="ml-4">Technician Requests</span>
                 </a>
             </li>
-            <li class="relative px-6 py-3">
-                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin.accepted-requests') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.accepted-requests'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.accepted-requests') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
                     href="{{ route('admin.accepted-requests') }}">
                     <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -46,8 +56,12 @@
                 </a>
             </li>
             
-            <li class="relative px-6 py-3">
-                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin.rejected-requests') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.rejected-requests'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.rejected-requests') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
                     href="{{ route('admin.rejected-requests') }}">
                     <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,8 +72,12 @@
                     <span class="ml-4">Rejected Requests</span>
                 </a>
             </li>
-            <li class="relative px-6 py-3">
-                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin.services') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.services'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.services') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
                     href="{{ route('admin.services') }}">
                     <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,8 +87,12 @@
                     <span class="ml-4">Manage Services</span>
                 </a>
             </li>
-            <li class="relative px-6 py-3">
-                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin.manage-technician') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.manage-technician'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.manage-technician') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
                     href="{{ route('admin.manage-technician') }}">
                     <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
                         stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,25 +102,47 @@
                     <span class="ml-4">Manage Technician</span>
                 </a>
             </li>
-            <li class="relative px-6 py-3">
-            <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-            href="{{ route('admin.technician-queries') }}">
-                <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.497 0-2.906-.33-4.132-.917L3 20l1.667-3.334A8.963 8.963 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+            {{-- <li class="relative px-6 py-3 {{ request()->routeIs('admin.technician-queries') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.technician-queries'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.technician-queries') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
+                    href="{{ route('admin.technician-queries') }}">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.497 0-2.906-.33-4.132-.917L3 20l1.667-3.334A8.963 8.963 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
                     <span class="ml-4">Technician Queries</span>
-             </a>
+                </a>
             </li>
-            <li class="relative px-6 py-3">
-            <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-            href="{{ route('admin.customer-queries') }}">
-                <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
-                    stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.497 0-2.906-.33-4.132-.917L3 20l1.667-3.334A8.963 8.963 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin.customer-queries') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.customer-queries'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.customer-queries') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
+                    href="{{ route('admin.customer-queries') }}">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.497 0-2.906-.33-4.132-.917L3 20l1.667-3.334A8.963 8.963 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
                     <span class="ml-4">Customer Queries</span>
-             </a>
+                </a>
+            </li> --}}
+            <li class="relative px-6 py-3 {{ request()->routeIs('admin.support-requests.*') ? 'bg-purple-100 dark:bg-purple-900' : '' }}">
+                @if(request()->routeIs('admin.support-requests.*'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-purple-600 rounded-tr-lg rounded-br-lg"
+                        aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.support-requests.*') ? 'text-gray-800 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400' }}"
+                    href="{{ route('admin.support-requests.index') }}">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="ml-4">Support Requests</span>
+                </a>
             </li>
             {{-- <li class="relative px-6 py-3">
                 <button

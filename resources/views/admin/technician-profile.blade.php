@@ -28,7 +28,9 @@
                     </div>
                     <div class="ml-6 text-white">
                         <h3 class="text-2xl font-bold">{{ $technicianProfile->user->name }}</h3>
-                        <p class="text-blue-100">{{ $technicianProfile->occupation }}</p>
+                        <p class="text-blue-100">{{ is_array($technicianProfile->occupation ?? null)
+                            ? implode(', ', $technicianProfile->occupation)
+                            : ($technicianProfile->occupation ?? 'N/A') }}</p>
                         <div class="mt-2">
                             <span class="px-3 py-1 text-sm rounded-full {{ $technicianProfile->user->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                 {{ ucfirst($technicianProfile->user->status) }}
@@ -72,7 +74,9 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="text-sm text-gray-500">Occupation</label>
-                                <p class="text-gray-800">{{ $technicianProfile->occupation ?? 'N/A' }}</p>
+                                <p class="text-gray-800">{{ is_array($technicianProfile->occupation ?? null)
+                                    ? implode(', ', $technicianProfile->occupation)
+                                    : ($technicianProfile->occupation ?? 'N/A') }}</p>
                             </div>
                             <div>
                                 <label class="text-sm text-gray-500">Experience</label>

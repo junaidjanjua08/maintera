@@ -11,7 +11,7 @@
         box-shadow: 0 0 30px rgba(0,0,0,0.1);
     }
     .section-header {
-        background: linear-gradient(45deg, #4e73df, #224abe);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         color: white;
         border-radius: 15px 15px 0 0;
         padding: 1.5rem;
@@ -143,6 +143,62 @@
     .address-details strong {
         color: #4e73df;
     }
+    .occupation-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    .occupation-option {
+        position: relative;
+        border: 2px solid #e3e6f0;
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+    .occupation-option:hover {
+        border-color: #4e73df;
+        box-shadow: 0 4px 12px rgba(78, 115, 223, 0.15);
+        transform: translateY(-2px);
+    }
+    .occupation-checkbox {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+    .occupation-checkbox:checked + .occupation-label {
+        color: #4e73df;
+    }
+    .occupation-checkbox:checked ~ .occupation-option {
+        border-color: #4e73df;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+    }
+    .occupation-label {
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        color: #5a5c69;
+        margin: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .occupation-label i {
+        margin-right: 12px;
+        font-size: 1.2rem;
+        color: #858796;
+        transition: all 0.3s ease;
+    }
+    .occupation-checkbox:checked + .occupation-label i {
+        color: #4e73df;
+        transform: scale(1.1);
+    }
+    .occupation-option.selected {
+        border-color: #4e73df;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+        box-shadow: 0 4px 12px rgba(78, 115, 223, 0.2);
+    }
 </style>
 
 <div class="container-fluid py-4">
@@ -167,7 +223,7 @@
                                     </div>
                                     <div class="card-body text-center">
                                         <div class="mb-4">
-                                            <img src="{{ $technician->profile_image ?? asset('images/default-profile.png') }}" 
+                                            <img src="{{ $profile->profile_image ? asset($profile->profile_image) : asset('images/default-profile.png') }}" 
                                                  alt="Profile Preview" 
                                                  class="profile-image-preview" 
                                                  id="profile-preview">
@@ -204,7 +260,7 @@
                                                    class="form-control @error('name') is-invalid @enderror" 
                                                    id="name" 
                                                    name="name" 
-                                                   value="{{ old('name', $technician->name ?? '') }}" 
+                                                   value="{{ old('name', $user->name ?? '') }}" 
                                                    placeholder="Enter your full name" 
                                                    required>
                                             @error('name')
@@ -218,7 +274,7 @@
                                                    class="form-control @error('email') is-invalid @enderror" 
                                                    id="email" 
                                                    name="email" 
-                                                   value="{{ old('email', $technician->email ?? '') }}" 
+                                                   value="{{ old('email', $user->email ?? '') }}" 
                                                    placeholder="Enter your email address" 
                                                    required>
                                             @error('email')
@@ -232,7 +288,7 @@
                                                    class="form-control @error('phone') is-invalid @enderror" 
                                                    id="phone" 
                                                    name="phone" 
-                                                   value="{{ old('phone', $technician->phone ?? '') }}" 
+                                                   value="{{ old('phone', $profile->phone ?? '') }}" 
                                                    placeholder="Enter your 10-digit mobile number" 
                                                    required>
                                             @error('phone')
@@ -251,24 +307,72 @@
                                     </div>
                                     <div class="form-section">
                                         <div class="form-group mb-4">
-                                            <label for="occupation" class="form-label required-field">What type of technician are you?</label>
-                                            <select class="form-select @error('occupation') is-invalid @enderror" 
-                                                    id="occupation" 
-                                                    name="occupation" 
-                                                    required>
-                                                <option value="">Select your specialization</option>
-                                                <option value="AC Repair" {{ (old('occupation', $technician->occupation ?? '') == 'AC Repair') ? 'selected' : '' }}>AC Repair</option>
-                                                <option value="Refrigerator Repair" {{ (old('occupation', $technician->occupation ?? '') == 'Refrigerator Repair') ? 'selected' : '' }}>Refrigerator Repair</option>
-                                                <option value="Washing Machine Repair" {{ (old('occupation', $technician->occupation ?? '') == 'Washing Machine Repair') ? 'selected' : '' }}>Washing Machine Repair</option>
-                                                <option value="TV Repair" {{ (old('occupation', $technician->occupation ?? '') == 'TV Repair') ? 'selected' : '' }}>TV Repair</option>
-                                                <option value="Computer Repair" {{ (old('occupation', $technician->occupation ?? '') == 'Computer Repair') ? 'selected' : '' }}>Computer Repair</option>
-                                                <option value="Mobile Phone Repair" {{ (old('occupation', $technician->occupation ?? '') == 'Mobile Phone Repair') ? 'selected' : '' }}>Mobile Phone Repair</option>
-                                                <option value="Electrical Work" {{ (old('occupation', $technician->occupation ?? '') == 'Electrical Work') ? 'selected' : '' }}>Electrical Work</option>
-                                                <option value="Plumbing" {{ (old('occupation', $technician->occupation ?? '') == 'Plumbing') ? 'selected' : '' }}>Plumbing</option>
-                                                <option value="Other" {{ (old('occupation', $technician->occupation ?? '') == 'Other') ? 'selected' : '' }}>Other</option>
-                                            </select>
+                                            <label class="form-label required-field">What type of technician are you?</label>
+                                            <div class="occupation-grid">
+                                                @php
+                                                    $occupations = old('occupation', $profile->occupation ?? []);
+                                                    if (!is_array($occupations)) {
+                                                        $occupations = [];
+                                                    }
+                                                @endphp
+                                                
+                                                <div class="occupation-option">
+                                                    <input type="checkbox" id="occupation_electrician" name="occupation[]" value="Electrician" 
+                                                           {{ in_array('Electrician', $occupations) ? 'checked' : '' }} class="occupation-checkbox">
+                                                    <label for="occupation_electrician" class="occupation-label">
+                                                        <i class="fas fa-bolt"></i>
+                                                        <span>Electrician</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="occupation-option">
+                                                    <input type="checkbox" id="occupation_plumber" name="occupation[]" value="Plumber" 
+                                                           {{ in_array('Plumber', $occupations) ? 'checked' : '' }} class="occupation-checkbox">
+                                                    <label for="occupation_plumber" class="occupation-label">
+                                                        <i class="fas fa-tint"></i>
+                                                        <span>Plumber</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="occupation-option">
+                                                    <input type="checkbox" id="occupation_painter" name="occupation[]" value="Painter" 
+                                                           {{ in_array('Painter', $occupations) ? 'checked' : '' }} class="occupation-checkbox">
+                                                    <label for="occupation_painter" class="occupation-label">
+                                                        <i class="fas fa-paint-brush"></i>
+                                                        <span>Painter</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="occupation-option">
+                                                    <input type="checkbox" id="occupation_carpenter" name="occupation[]" value="Carpenter" 
+                                                           {{ in_array('Carpenter', $occupations) ? 'checked' : '' }} class="occupation-checkbox">
+                                                    <label for="occupation_carpenter" class="occupation-label">
+                                                        <i class="fas fa-hammer"></i>
+                                                        <span>Carpenter</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="occupation-option">
+                                                    <input type="checkbox" id="occupation_housekeeping" name="occupation[]" value="Housekeeping" 
+                                                           {{ in_array('Housekeeping', $occupations) ? 'checked' : '' }} class="occupation-checkbox">
+                                                    <label for="occupation_housekeeping" class="occupation-label">
+                                                        <i class="fas fa-home"></i>
+                                                        <span>Housekeeping</span>
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="occupation-option">
+                                                    <input type="checkbox" id="occupation_other" name="occupation[]" value="Other" 
+                                                           {{ in_array('Other', $occupations) ? 'checked' : '' }} class="occupation-checkbox">
+                                                    <label for="occupation_other" class="occupation-label">
+                                                        <i class="fas fa-tools"></i>
+                                                        <span>Other</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">Select all that apply to your skills</small>
                                             @error('occupation')
-                                                <span class="invalid-feedback">{{ $message }}</span>
+                                                <span class="invalid-feedback d-block">{{ $message }}</span>
                                             @enderror
                                         </div>
 
@@ -279,11 +383,11 @@
                                                     name="experience" 
                                                     required>
                                                 <option value="">Select years of experience</option>
-                                                <option value="0-1" {{ (old('experience', $technician->experience ?? '') == '0-1') ? 'selected' : '' }}>Less than 1 year</option>
-                                                <option value="1-3" {{ (old('experience', $technician->experience ?? '') == '1-3') ? 'selected' : '' }}>1-3 years</option>
-                                                <option value="3-5" {{ (old('experience', $technician->experience ?? '') == '3-5') ? 'selected' : '' }}>3-5 years</option>
-                                                <option value="5-10" {{ (old('experience', $technician->experience ?? '') == '5-10') ? 'selected' : '' }}>5-10 years</option>
-                                                <option value="10+" {{ (old('experience', $technician->experience ?? '') == '10+') ? 'selected' : '' }}>More than 10 years</option>
+                                                <option value="0-1" {{ (old('experience', $profile->experience ?? '') == '0-1') ? 'selected' : '' }}>Less than 1 year</option>
+                                                <option value="1-3" {{ (old('experience', $profile->experience ?? '') == '1-3') ? 'selected' : '' }}>1-3 years</option>
+                                                <option value="3-5" {{ (old('experience', $profile->experience ?? '') == '3-5') ? 'selected' : '' }}>3-5 years</option>
+                                                <option value="5-10" {{ (old('experience', $profile->experience ?? '') == '5-10') ? 'selected' : '' }}>5-10 years</option>
+                                                <option value="10+" {{ (old('experience', $profile->experience ?? '') == '10+') ? 'selected' : '' }}>More than 10 years</option>
                                             </select>
                                             @error('experience')
                                                 <span class="invalid-feedback">{{ $message }}</span>
@@ -297,11 +401,11 @@
                                                     name="qualification" 
                                                     required>
                                                 <option value="">Select your qualification</option>
-                                                <option value="High School" {{ (old('qualification', $technician->qualification ?? '') == 'High School') ? 'selected' : '' }}>High School</option>
-                                                <option value="ITI" {{ (old('qualification', $technician->qualification ?? '') == 'ITI') ? 'selected' : '' }}>ITI</option>
-                                                <option value="Diploma" {{ (old('qualification', $technician->qualification ?? '') == 'Diploma') ? 'selected' : '' }}>Diploma</option>
-                                                <option value="Bachelor's Degree" {{ (old('qualification', $technician->qualification ?? '') == 'Bachelor\'s Degree') ? 'selected' : '' }}>Bachelor's Degree</option>
-                                                <option value="Other" {{ (old('qualification', $technician->qualification ?? '') == 'Other') ? 'selected' : '' }}>Other</option>
+                                                <option value="High School" {{ (old('qualification', $profile->qualification ?? '') == 'High School') ? 'selected' : '' }}>High School</option>
+                                                <option value="ITI" {{ (old('qualification', $profile->qualification ?? '') == 'ITI') ? 'selected' : '' }}>ITI</option>
+                                                <option value="Diploma" {{ (old('qualification', $profile->qualification ?? '') == 'Diploma') ? 'selected' : '' }}>Diploma</option>
+                                                <option value="Bachelor's Degree" {{ (old('qualification', $profile->qualification ?? '') == 'Bachelor\'s Degree') ? 'selected' : '' }}>Bachelor's Degree</option>
+                                                <option value="Other" {{ (old('qualification', $profile->qualification ?? '') == 'Other') ? 'selected' : '' }}>Other</option>
                                             </select>
                                             @error('qualification')
                                                 <span class="invalid-feedback">{{ $message }}</span>
@@ -327,7 +431,7 @@
                                                                class="form-control @error('address') is-invalid @enderror" 
                                                                id="address" 
                                                                name="address" 
-                                                               value="{{ old('address', $technician->address ?? '') }}" 
+                                                               value="{{ old('address', $profile->address ?? '') }}" 
                                                                placeholder="Start typing your address..."
                                                                required>
                                                         <i class="fas fa-map-marker-alt location-icon"></i>
@@ -348,15 +452,15 @@
                                             </div>
 
                                             <!-- Hidden fields for storing address components -->
-                                            <input type="hidden" id="street_number" name="street_number" value="{{ old('street_number', $technician->street_number ?? '') }}">
-                                            <input type="hidden" id="route" name="route" value="{{ old('route', $technician->route ?? '') }}">
-                                            <input type="hidden" id="locality" name="locality" value="{{ old('locality', $technician->locality ?? '') }}">
-                                            <input type="hidden" id="administrative_area_level_1" name="state" value="{{ old('state', $technician->state ?? '') }}">
-                                            <input type="hidden" id="postal_code" name="postal_code" value="{{ old('postal_code', $technician->postal_code ?? '') }}">
+                                            <input type="hidden" id="street_number" name="street_number" value="{{ old('street_number', $profile->street_number ?? '') }}">
+                                            <input type="hidden" id="route" name="route" value="{{ old('route', $profile->route ?? '') }}">
+                                            <input type="hidden" id="locality" name="locality" value="{{ old('locality', $profile->locality ?? '') }}">
+                                            <input type="hidden" id="administrative_area_level_1" name="state" value="{{ old('state', $profile->state ?? '') }}">
+                                            <input type="hidden" id="postal_code" name="postal_code" value="{{ old('postal_code', $profile->postal_code ?? '') }}">
                                             <input type="hidden" id="country" name="country" value="Pakistan">
-                                            <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $technician->latitude ?? '') }}">
-                                            <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $technician->longitude ?? '') }}">
-                                            <input type="hidden" id="area" name="area" value="{{ old('area', $technician->area ?? '') }}">
+                                            <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $profile->latitude ?? '') }}">
+                                            <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $profile->longitude ?? '') }}">
+                                            <input type="hidden" id="area" name="area" value="{{ old('area', $profile->area ?? '') }}">
 
                                             <!-- Address Preview -->
                                             <div class="col-12">
@@ -480,7 +584,11 @@ function initAutocomplete() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
             } else {
-                alert('Geolocation is not supported by this browser.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Geolocation Not Supported',
+                    text: 'Geolocation is not supported by this browser.'
+                });
             }
 
             function successCallback(position) {
@@ -528,7 +636,8 @@ function initAutocomplete() {
                                     document.getElementById('route').value = component.long_name;
                                     break;
                                 case 'locality':
-                                    document.getElementById('locality').value = component.long_name;
+                                    document.getElementById('locality').value = component
+                                        .long_name;
                                     document.getElementById('selected-city').textContent = component
                                         .long_name;
                                     break;
@@ -551,14 +660,45 @@ function initAutocomplete() {
                             }
                         }
                     } else {
-                        alert('Unable to retrieve address. Try again.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Address Error',
+                            text: 'Unable to retrieve address. Try again.'
+                        });
                     }
                 });
             }
 
             function errorCallback(error) {
-                alert('Geolocation error: ' + error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Geolocation Error',
+                    text: 'Geolocation error: ' + error.message
+                });
             }
+        });
+
+        // Handle occupation checkbox visual feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const occupationCheckboxes = document.querySelectorAll('.occupation-checkbox');
+            
+            occupationCheckboxes.forEach(checkbox => {
+                const option = checkbox.closest('.occupation-option');
+                
+                // Set initial state
+                if (checkbox.checked) {
+                    option.classList.add('selected');
+                }
+                
+                // Handle change events
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        option.classList.add('selected');
+                    } else {
+                        option.classList.remove('selected');
+                    }
+                });
+            });
         });
 </script>
 

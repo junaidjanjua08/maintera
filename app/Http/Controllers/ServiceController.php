@@ -136,12 +136,11 @@ private function getFileType(string $mime)
             'media' => $mediaPaths,
             'status' => 'pending',
         ]);
-
-        // Notify nearby technicians within 30km
+        
+        // Notify nearby technicians within 30km and create fare offers for them
         $orderLat = $order->latitude;
         $orderLng = $order->longitude;
 
-        // dd($orderLat);
         if ($orderLat && $orderLng) {
             $technicians = \App\Models\User::technicians()
                 ->whereHas('technicianProfile', function ($q) {
@@ -151,16 +150,91 @@ private function getFileType(string $mime)
                 })
                 ->with('technicianProfile')
                 ->get();
-// dd($technicians);
+
+            // Get the order's category (field of work)
+            $orderCategory = ServiceCategory::find($order->category_id);
+            
+            // Define occupation to category mapping
+            $occupationToCategory = [
+                'Electrician' => 'Electrical',
+                'Plumber' => 'Plumbing',
+                'Housekeeping' => 'Cleaning',
+                'Carpenter' => 'Carpentry',
+                'Painter' => 'Painting',
+                'AC Technician' => 'AC Services',
+                'Appliance Repair' => 'Appliance Repair',
+                // Add reverse mappings for better matching
+                'Electrical' => 'Electrical',
+                'Plumbing' => 'Plumbing',
+                'Cleaning' => 'Cleaning',
+                'Carpentry' => 'Carpentry',
+                'Painting' => 'Painting',
+                'AC Services' => 'AC Services',
+            ];
+            
+            \Log::info("Order #{$order->id} created. Looking for technicians within 30km for category: {$orderCategory->name}");
+            
             foreach ($technicians as $technician) {
                 $profile = $technician->technicianProfile;
                 if ($profile && $profile->latitude && $profile->longitude) {
                     $distance = $this->calculateDistance($orderLat, $orderLng, $profile->latitude, $profile->longitude);
+                    
+                    \Log::info("Technician {$technician->name} is {$distance}km away");
+                    
+                    // Check if technician is within 30km range
                     if ($distance <= 30) {
-                        $technician->notify(new \App\Notifications\NewOrderRequest($order));
+                        // Check if technician has the required skills/occupation
+                        $technicianOccupations = $profile->occupation ?? [];
+                        $hasRequiredSkill = false;
+                        
+                        \Log::info("Technician {$technician->name} occupations: " . json_encode($technicianOccupations));
+                        
+                        // Check if technician's occupation matches the order's category
+                        if (is_array($technicianOccupations)) {
+                            foreach ($technicianOccupations as $occupation) {
+                                // Check if occupation name matches the category
+                                if (isset($occupationToCategory[$occupation]) && $occupationToCategory[$occupation] === $orderCategory->name) {
+                                    $hasRequiredSkill = true;
+                                    \Log::info("Technician {$technician->name} has required skill for category {$orderCategory->name}");
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // If technician has the required skill, create order request
+                        if ($hasRequiredSkill) {
+                            // Create a pending order request for this technician if not already exists
+                            $existing = \App\Models\OrderRequest::where('order_id', $order->id)
+                                ->where('technician_id', $technician->id)
+                                ->first();
+                                
+                            if (!$existing) {
+                                \App\Models\OrderRequest::create([
+                                    'order_id' => $order->id,
+                                    'technician_id' => $technician->id,
+                                    'distance' => $distance,
+                                    'status' => 'Pending',
+                                ]);
+                                
+                                \Log::info("Order request created for technician {$technician->name} for order #{$order->id}");
+                                
+                                // Send notification to technician
+                                $technician->notify(new \App\Notifications\NewOrderRequest($order));
+                            } else {
+                                \Log::info("Order request already exists for technician {$technician->name} for order #{$order->id}");
+                            }
+                        } else {
+                            \Log::info("Technician {$technician->name} doesn't have required skill for category {$orderCategory->name}");
+                        }
+                    } else {
+                        \Log::info("Technician {$technician->name} is too far ({$distance}km) for order #{$order->id}");
                     }
+                } else {
+                    \Log::info("Technician {$technician->name} doesn't have location data");
                 }
             }
+        } else {
+            \Log::warning("Order #{$order->id} doesn't have location data");
         }
 
         return redirect()->back()->with('sweet_success', 'Your booking has been submitted successfully!');

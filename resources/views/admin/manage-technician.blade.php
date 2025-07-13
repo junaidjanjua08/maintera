@@ -99,25 +99,39 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-center whitespace-nowrap">
-                            <form action="#" method="POST">
+                            <form action="{{ route('admin.technicians.toggle-status', $technician['id']) }}" method="POST" class="inline">
                                 @csrf
                                 @method('PATCH')
                                 <label class="inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer" {{ $technician['status'] ? 'checked' : '' }}>
-                                    <div class="relative w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                    <input type="checkbox" 
+                                           class="sr-only peer status-toggle" 
+                                           {{ $technician['status'] ? 'checked' : '' }}
+                                           onchange="this.form.submit()">
+                                    <div class="relative w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500 hover:bg-gray-400 peer-checked:hover:bg-green-600"></div>
+                                    <span class="ml-2 text-xs font-medium text-gray-700">{{ $technician['status'] ? 'Active' : 'Inactive' }}</span>
                                 </label>
                             </form>
                         </td>
                         <td class="px-6 py-4 text-right whitespace-nowrap">
                             <div class="flex justify-end gap-2">
-                                <button class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md text-sm transition-all duration-300">
-                                    👁️ View
-                                </button>
-                                <form action="#" method="POST" onsubmit="return confirm('Are you sure you want to delete this technician?');">
+                                <a href="{{ route('admin.technicians.view', $technician['id']) }}" 
+                                   class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md text-sm transition-all duration-300">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    View
+                                </a>
+                                <form action="{{ route('admin.technicians.delete', $technician['id']) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-md text-sm transition-all duration-300">
-                                        🗑️ Delete
+                                    <button type="submit" 
+                                            onclick="return confirm('Are you sure you want to delete this technician? This action cannot be undone.')"
+                                            class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-md text-sm transition-all duration-300">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        Delete
                                     </button>
                                 </form>
                             </div>
@@ -158,4 +172,79 @@
         @endif
     </div>
 </div>
+
+<script>
+// Enhanced Toggle Switch Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleSwitches = document.querySelectorAll('.status-toggle');
+    
+    toggleSwitches.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            // Show loading state
+            const form = this.closest('form');
+            const statusText = this.parentElement.querySelector('span');
+            
+            // Add loading class to the toggle
+            this.disabled = true;
+            this.parentElement.style.opacity = '0.6';
+            
+            // Update status text immediately for better UX
+            if (statusText) {
+                statusText.textContent = this.checked ? 'Active' : 'Inactive';
+                statusText.className = this.checked ? 'ml-2 text-xs font-medium text-green-700' : 'ml-2 text-xs font-medium text-gray-700';
+            }
+            
+            // Submit the form
+            form.submit();
+        });
+    });
+    
+    // Add success message display if there's a flash message
+    @if(session('success'))
+        showNotification('{{ session('success') }}', 'success');
+    @endif
+    
+    @if(session('error'))
+        showNotification('{{ session('error') }}', 'error');
+    @endif
+});
+
+// Notification function
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            // Auto-submit search form after typing stops
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                this.closest('form').submit();
+            }, 500);
+        });
+    }
+});
+</script>
 @endsection

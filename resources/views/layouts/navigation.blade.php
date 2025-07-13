@@ -15,6 +15,9 @@
                     <x-nav-link :href="route('home')" :active="request()->routeIs('dashboard','home')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('customer.chat.index')" :active="request()->routeIs('customer.chat.*')">
+                        <i class="fas fa-comments mr-2"></i>{{ __('Chats') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -69,6 +72,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('customer.chat.index')" :active="request()->routeIs('customer.chat.*')">
+                <i class="fas fa-comments mr-2"></i>{{ __('Chats') }}
             </x-responsive-nav-link>
         </div>
 

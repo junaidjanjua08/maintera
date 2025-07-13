@@ -91,46 +91,61 @@
             </div>
         </div>
 
-        <!-- Delete Account Section -->
+        <!-- Deactivate Account Section -->
         <div class="row">
             <div class="col-xl-3 col-lg-4 col-md-12 col-12">
                 <div class="mb-4 mb-lg-0">
-                    <h4 class="section-title">Delete Account</h4>
-                    <p class="fs-5 text-muted">Permanently delete your account and content</p>
+                    <h4 class="section-title">Deactivate Account</h4>
+                    <p class="fs-5 text-muted">Temporarily deactivate your account</p>
                 </div>
             </div>
         
             <div class="col-xl-9 col-lg-8 col-md-12 col-12">
-                <!-- Card for Delete Account -->
+                <!-- Card for Deactivate Account -->
                 <div class="card mb-6 shadow-lg rounded-lg">
                     <div class="card-body">
                         <h4 class="card-title mb-3">Danger Zone</h4>
-                        <p class="text-danger">Deleting your account will erase all your data, including articles, comments, chat messages, and more.</p>
-                        <!-- Delete Account Button to Trigger Modal -->
-                        <a href="#" class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete Account</a>
-                        <p class="small mb-0 mt-3">For any inquiries, feel free to contact us at <a href="mailto:dashui@example.com">dashui@example.com</a>.</p>
+                        <p class="text-danger">Deactivating your account will:</p>
+                        <ul class="text-danger mb-3">
+                            <li>Set your account status to inactive</li>
+                            <li>Remove you from active technician listings</li>
+                            <li>Prevent you from receiving new orders</li>
+                            <li>Keep your data safe for potential reactivation</li>
+                        </ul>
+                        <p class="text-info">You can contact support to reactivate your account at any time.</p>
+                        <!-- Deactivate Account Button to Trigger Modal -->
+                        <a href="#" class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Deactivate Account</a>
+                        
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Modal for Account Deletion Confirmation -->
+        <!-- Modal for Account Deactivation Confirmation -->
         <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deletion</h5>
+                        <h5 class="modal-title" id="deleteAccountModalLabel">Confirm Account Deactivation</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p class="text-danger">Are you sure you want to delete your account? This action is irreversible and will delete all your data, including articles, comments, chat messages, and more.</p>
-                        <p class="small mb-0 mt-3">If you have any concerns, please contact us at <a href="mailto:dashui@example.com">dashui@example.com</a>.</p>
+                        <p class="text-danger">Are you sure you want to deactivate your account?</p>
+                        <p>This will:</p>
+                        <ul>
+                            <li>Set your account status to inactive</li>
+                            <li>Remove you from active technician listings</li>
+                            <li>Prevent you from receiving new orders</li>
+                            <li>Keep your data safe for potential reactivation</li>
+                        </ul>
+                        <p class="text-info">You can contact support to reactivate your account at any time.</p>
+                       
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <form action="{{ route('technician.deleteAccount') }}" method="POST" id="deleteAccountForm">
                             @csrf
-                            <button type="submit" class="btn btn-danger">Delete Account</button>
+                            <button type="submit" class="btn btn-danger">Deactivate Account</button>
                         </form>
                     </div>
                 </div>
@@ -196,6 +211,7 @@ body {
 
 .delete-btn:hover {
     background-color: #c82333;
+    color: #fff;
 }
 
 /* Password Requirements */
