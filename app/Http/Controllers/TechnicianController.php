@@ -30,7 +30,11 @@ class TechnicianController extends Controller
                 $query->where('status', 'pending');
             })
             ->count();
-        $completedOrders = Order::where('status', 'completed')->count();
+
+        // Only completed orders for the authenticated technician
+        $completedOrders = Order::where('status', 'completed')
+            ->where('technician_id', auth()->id())
+            ->count();
 
         // Return the dashboard view with the order counts
         return view('technician.pages.dashboard', compact('orderRequests', 'pendingOrders', 'completedOrders'));

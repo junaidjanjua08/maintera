@@ -53,39 +53,9 @@
         </div>
     </a>
 
-    <!-- Customer Queries -->
-    <a class="block p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer">
-        <div class="flex items-center gap-4">
-            <div class="bg-purple-100 text-purple-600 p-3 rounded-full">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M8 10h.01M12 10h.01M16 10h.01M21 12c0-4.418-4.03-8-9-8S3 7.582 3 12c0 1.837.633 3.53 1.7 4.9L4 21l4.1-1.7A9.978 9.978 0 0012 20c4.97 0 9-3.582 9-8z" />
-                </svg>
-            </div>
-            <div>
-                <h2 class="text-gray-600 text-sm font-semibold">Customer Queries</h2>
-                <p class="text-2xl font-bold text-purple-600">19</p>
-            </div>
-        </div>
-    </a>
+   
 
-    <!-- Technician Queries -->
-    <a class="block p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer">
-        <div class="flex items-center gap-4">
-            <div class="bg-red-100 text-red-600 p-3 rounded-full">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M18.364 5.636a9 9 0 11-12.728 0m12.728 0A9 9 0 005.636 18.364M18.364 5.636L12 12" />
-                </svg>
-            </div>
-            <div>
-                <h2 class="text-gray-600 text-sm font-semibold">Technician Queries</h2>
-                <p class="text-2xl font-bold text-red-600">11</p>
-            </div>
-        </div>
-    </a>
+ 
 
     <!-- Support Requests -->
     <a href="{{ route('admin.support-requests.index') }}" class="block p-6 bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 cursor-pointer">

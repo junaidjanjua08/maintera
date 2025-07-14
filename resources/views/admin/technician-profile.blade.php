@@ -19,14 +19,14 @@
                     <div class="flex-shrink-0">
                         @if($technicianProfile->profile_image)
                             <img src="{{ asset($technicianProfile->profile_image) }}" alt="{{ $technicianProfile->user->name }}" 
-                                class="h-24 w-24 rounded-full border-4 border-white object-cover">
+                                class="h-12 w-12 rounded-full border-4 border-white object-cover">
                         @else
-                            <div class="h-24 w-24 rounded-full border-4 border-white bg-white flex items-center justify-center text-3xl font-bold text-blue-600">
+                            <div class="h-12 w-12 rounded-full border-4 border-white bg-white flex items-center justify-center text-3xl font-bold text-blue-600">
                                 {{ strtoupper(substr($technicianProfile->user->name, 0, 1)) }}
                             </div>
                         @endif
                     </div>
-                    <div class="ml-6 text-white">
+                    <div class="ml-6 text-black">
                         <h3 class="text-2xl font-bold">{{ $technicianProfile->user->name }}</h3>
                         <p class="text-blue-100">{{ is_array($technicianProfile->occupation ?? null)
                             ? implode(', ', $technicianProfile->occupation)

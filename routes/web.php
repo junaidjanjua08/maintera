@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [ServiceController::class, 'home']);
 Route::get('home', [ServiceController::class, 'home'])->name('home');
 
-Route::get('/dashboard', function () {
-    return view('welcome');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard',[ServiceController::class, 'home'])->name('dashboard');
 
 Route::get('/services/{category}', [ServiceController::class, 'showServices'])->name('subservices');
 // web.php (Routes file)
